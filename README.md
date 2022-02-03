@@ -1,4 +1,4 @@
-# converterbot
+# Convertabot
 Discord converter bot for metric - imperial and vice versa. It wil automatically convert any measurements / units it recognizes.
 
 Supported units:

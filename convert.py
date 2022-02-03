@@ -119,7 +119,7 @@ def get_unit_strip(preCutInput,startIndex):
             unit_string = unit_string.lower()
             # A bunch of special clauses
             # Add s if necessary, so rest of script doesn't break. Very lazy
-            if (unit_string == "gallon" or unit_string == "kilogram" or unit_string == "centimeter" or unit_string == "meter" or unit_string == "mile" or unit_string == "centimeter" or unit_string == "liter"):
+            if (unit_string == "gallon" or unit_string == "kilogram" or unit_string == "centimeter" or unit_string == "meter" or unit_string == "mile" or unit_string == "centimeter" or unit_string == "liter" or unit_string =="millimeter"):
                 unit_string += "s"
             # Special clause for inches
             elif unit_string == "inch":

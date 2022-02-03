@@ -1,4 +1,3 @@
-from operator import index
 import re
 
 return_units = { # Which unit converts to what
@@ -252,7 +251,7 @@ def get_string(init_num, init_unit, return_num, return_unit):
         )
 
 # Handles conversion when provided string
-def convertHandler(message):
+async def convertHandler(message):
     results = []
     toConvert = strip_msg(message) # Array of found numbers and units
     for c in toConvert:

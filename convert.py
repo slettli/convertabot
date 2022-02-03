@@ -100,11 +100,11 @@ def convert(init_num, init_unit):
 def get_string(init_num, init_unit, return_num, return_unit):
     if init_num is None:
         if init_unit is None:
-            return "invalid number and unit"
+            return "Invalid number and unit"
         else:
-            return "invalid number"
+            return "Invalid number"
     elif init_unit is None:
-        return "invalid unit"
+        return "Invalid unit"
     else:
         return (
             str(init_num)
@@ -115,3 +115,12 @@ def get_string(init_num, init_unit, return_num, return_unit):
             + " "
             + spell_out_unit(return_unit)
         )
+
+# Handles conversion when provided string
+def convertHandler(message):
+    num = get_num(message)
+    unit = get_unit(message)
+    returnUnit = get_return_unit(unit)
+    convertedNum = convert(num,unit)
+    result = get_string(num,unit,convertedNum,returnUnit)
+    return str(result)

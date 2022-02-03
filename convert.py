@@ -14,6 +14,7 @@ return_units = { # Which unit converts to what
         "in" : "cm",
         "ft" : "m",
         "m" : "ft",
+        "mm" : "in",
     }
 
 spelled_out_units = { # Full names and short names
@@ -29,6 +30,7 @@ spelled_out_units = { # Full names and short names
         "m" : "meters",
         "f" : "fahrenheit",
         "c" : "celsius",
+        "mm" : "millimeters",
     }
 
 # Most of this is shamelessly taken from TyMick. Ty, Mick.
@@ -104,13 +106,13 @@ def get_unit_strip(preCutInput,startIndex):
     else:
         return None
     # Search for shorthand form
-    if re.search(r"^(gal|L|lbs|kg|mi|km|cm|in|m|ft|c|f)$", unit_string, re.I):
+    if re.search(r"^(gal|L|lbs|kg|mi|km|cm|in|m|ft|c|f|mm)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return unit_string.upper(),toRemove
         else:
             return unit_string.lower(),toRemove
     # Search for spelled out form
-    elif re.search(r"^(gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot|fahrenheit|celsius)$", unit_string, re.I):
+    elif re.search(r"^(gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot|fahrenheit|celsius|millimeters?)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return shorten_unit(unit_string).upper(),toRemove
         else:
@@ -225,6 +227,8 @@ def convert(init_num, init_unit):
         return round(init_num * FT_TO_M, 2)
     elif init_unit == "m":
         return round(init_num / FT_TO_M, 2)
+    elif init_unit == "mm":
+        return round((init_num / 10) / IN_TO_CM, 4)
     else:
         return None
 

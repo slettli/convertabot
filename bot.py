@@ -34,3 +34,10 @@ async def on_message(message):
         print(fullResponse)
         await message.channel.send(fullResponse)
 client.run(TOKEN)
+
+'''
+TODO
+- Treat , as .
+- Add km/h and mp/h
+- Support for negative temperatures
+'''

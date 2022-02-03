@@ -23,10 +23,14 @@ async def on_message(message):
     elif re.search(r'\d', message.content): # Try converting if number found, just to parse down all messages a bit
         print('Number recognized! - ' + message.content)
         response = c.convertHandler(message.content)
-        if response in errorArr: # If invalid unit or number, print to console
-            pass
-        else: # Else send converted unit to channel
-            await message.channel.send(response)
-        print(response)
-
+        if len(response) == 0:
+            return 
+        fullResponse = ""
+        for r in response:
+            if r in errorArr: # If invalid unit or number, print to console
+                pass
+            else: # Else send converted responses to channel
+                fullResponse += r + "\n"
+        print(fullResponse)
+        await message.channel.send(fullResponse)
 client.run(TOKEN)

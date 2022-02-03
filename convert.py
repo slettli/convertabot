@@ -27,9 +27,11 @@ def num(n):
 # Attempts to strip message to only number and unit. Big and messy
 # First find index where unit starts
 def strip_msg(input):
-    number = get_num_strip(input)
+    number,wordIndex = get_num_strip(input)
+    unit,lastIndex = get_unit_strip(input,wordIndex)
+    print(unit)
     print(number)
-    return number
+    return number,unit
 
 # Strip before number, using index of unit
 def get_num_strip(input):
@@ -37,10 +39,11 @@ def get_num_strip(input):
     indexFirstLetter = re.search(r"\d\s[A-Za-z]|\d[A-Z[a-z]", input).start()
     stripInput = ""
     if input[indexFirstLetter+1] == " ": # Strip to first letter after number and space
-        stripInput = input[0:indexFirstLetter+2] # Plus an extra because yes, for old function below
+        indexFirstLetter += 2
+        stripInput = input[0:indexFirstLetter] 
     else:                              # Or strip to with no space between num and letter
-        stripInput = input[0:indexFirstLetter+1]
-    print(stripInput)
+        indexFirstLetter += 1
+        stripInput = input[0:indexFirstLetter]
 
     extractNum = [] # Extract number from string
     for c in stripInput[::-1]:
@@ -53,12 +56,42 @@ def get_num_strip(input):
     foundNum = (''.join(extractNum))
 
     foundNum = num(foundNum)
-    print(foundNum)
-    return foundNum
+    return foundNum,indexFirstLetter
 
-# Fidn unit and return index of first letter of unit
-def get_unit_strip(input):
-    pass
+# Find matching unit if any, then return index of last letter 
+def get_unit_strip(preCutInput,startIndex):
+    input = preCutInput[startIndex:startIndex+12] # Use part after number we just split
+
+    # Split at first letter
+    index_to_split = re.search(r"\s|$", input).start()
+    if index_to_split is not None:
+        unit_string = input[0:index_to_split]
+    else:
+        return None
+    # Search for shorthand form
+    if re.search(r"^(gal|L|lbs|kg|mi|km|cm|in|m|ft)$", unit_string, re.I):
+        if re.search(r"^L$", unit_string, re.I):
+            return unit_string.upper(),index_to_split
+        else:
+            return unit_string.lower(),index_to_split
+    # Search for spelled out form
+    elif re.search(r"^(gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot)$", unit_string, re.I):
+        if re.search(r"^L$", unit_string, re.I):
+            return shorten_unit(unit_string).upper(),index_to_split
+        else:
+            unit_string = unit_string.lower()
+            # A bunch of special clauses
+            # Add s if necessary, so rest of script doesn't break. Very lazy
+            if (unit_string == "gallon" or unit_string == "kilogram" or unit_string == "centimeter" or unit_string == "meter" or unit_string == "mile" or unit_string == "centimeter" or unit_string == "liter"):
+                unit_string += "s"
+            # Special clause for inches
+            elif unit_string == "inch":
+                unit_string = "inches"
+            elif unit_string == "foot":
+                unit_string = "feet"
+            return shorten_unit(unit_string).lower(),index_to_split
+    else:
+        return None
 
 def get_num(input):
     # Split at first letter

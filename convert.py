@@ -1,4 +1,18 @@
+from operator import index
 import re
+
+spelled_out_units = {
+        "gal": "gallons",
+        "L": "liters",
+        "lbs": "pounds",
+        "kg": "kilograms",
+        "mi": "miles",
+        "km": "kilometers",
+        "cm" : "centimeters",
+        "in" : "inches",
+        "ft" : "feet",
+        "m" : "meters",
+    }
 
 # Most of this is shamelessly taken from TyMick. Ty, Mick.
 def num(n):
@@ -10,6 +24,41 @@ def num(n):
         except:
             return None
 
+# Attempts to strip message to only number and unit. Big and messy
+# First find index where unit starts
+def strip_msg(input):
+    number = get_num_strip(input)
+    print(number)
+    return number
+
+# Strip before number, using index of unit
+def get_num_strip(input):
+    # Split at first number followed by a letter
+    indexFirstLetter = re.search(r"\d\s[A-Za-z]|\d[A-Z[a-z]", input).start()
+    stripInput = ""
+    if input[indexFirstLetter+1] == " ": # Strip to first letter after number and space
+        stripInput = input[0:indexFirstLetter+2] # Plus an extra because yes, for old function below
+    else:                              # Or strip to with no space between num and letter
+        stripInput = input[0:indexFirstLetter+1]
+    print(stripInput)
+
+    extractNum = [] # Extract number from string
+    for c in stripInput[::-1]:
+        if c.isdigit():
+            extractNum.append(c)
+        elif c == ".":
+            extractNum.append(c)
+    extractNum.reverse()
+
+    foundNum = (''.join(extractNum))
+
+    foundNum = num(foundNum)
+    print(foundNum)
+    return foundNum
+
+# Fidn unit and return index of first letter of unit
+def get_unit_strip(input):
+    pass
 
 def get_num(input):
     # Split at first letter
@@ -31,7 +80,6 @@ def get_num(input):
 
     return num(num_string)
 
-
 def get_unit(input):
     # Split at first letter
     index_to_split = re.search(r"[A-Za-z]", input).start()
@@ -39,15 +87,30 @@ def get_unit(input):
         unit_string = input[index_to_split : len(input)]
     else:
         return None
-
-    if re.search(r"^(gal|L|lbs|kg|mi|km)$", unit_string, re.I):
+    # Search for shorthand form
+    if re.search(r"^(gal|L|lbs|kg|mi|km|cm|in|m|ft)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return unit_string.upper()
         else:
             return unit_string.lower()
+    # Search for spelled out form
+    elif re.search(r"^(gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot)$", unit_string, re.I):
+        if re.search(r"^L$", unit_string, re.I):
+            return shorten_unit(unit_string).upper()
+        else:
+            unit_string = unit_string.lower()
+            # A bunch of special clauses
+            # Add s if necessary, so rest of script doesn't break. Very lazy
+            if (unit_string == "gallon" or unit_string == "kilogram" or unit_string == "centimeter" or unit_string == "meter" or unit_string == "mile" or unit_string == "centimeter" or unit_string == "liter"):
+                unit_string += "s"
+            # Special clause for inches
+            elif unit_string == "inch":
+                unit_string = "inches"
+            elif unit_string == "foot":
+                unit_string = "feet"
+            return shorten_unit(unit_string).lower()
     else:
         return None
-
 
 def get_return_unit(init_unit):
     return_units = {
@@ -57,21 +120,20 @@ def get_return_unit(init_unit):
         "kg": "lbs",
         "mi": "km",
         "km": "mi",
+        "cm" : "in",
+        "in" : "cm",
+        "ft" : "m",
+        "m" : "ft",
     }
     return return_units.get(init_unit)
 
-
 def spell_out_unit(unit):
-    spelled_out_units = {
-        "gal": "gallons",
-        "L": "liters",
-        "lbs": "pounds",
-        "kg": "kilograms",
-        "mi": "miles",
-        "km": "kilometers",
-    }
     return spelled_out_units.get(unit)
 
+def shorten_unit(unit):
+    for key, value in spelled_out_units.items():
+         if unit == value:
+             return key
 
 def convert(init_num, init_unit):
     if init_num is None:
@@ -80,6 +142,8 @@ def convert(init_num, init_unit):
     GAL_TO_L = 3.78541
     LBS_TO_KG = 0.453592
     MI_TO_KM = 1.60934
+    IN_TO_CM = 2.54
+    FT_TO_M = 0.3048 
 
     if init_unit == "gal":
         return round(init_num * GAL_TO_L, 5)
@@ -93,9 +157,16 @@ def convert(init_num, init_unit):
         return round(init_num * MI_TO_KM, 5)
     elif init_unit == "km":
         return round(init_num / MI_TO_KM, 5)
+    elif init_unit == "in":
+        return round(init_num * IN_TO_CM, 5)
+    elif init_unit == "cm":
+        return round(init_num / IN_TO_CM, 5)
+    elif init_unit == "ft":
+        return round(init_num * FT_TO_M, 5)
+    elif init_unit == "m":
+        return round(init_num / FT_TO_M, 5)
     else:
         return None
-
 
 def get_string(init_num, init_unit, return_num, return_unit):
     if init_num is None:
@@ -118,8 +189,12 @@ def get_string(init_num, init_unit, return_num, return_unit):
 
 # Handles conversion when provided string
 def convertHandler(message):
-    num = get_num(message)
-    unit = get_unit(message)
+
+    num,unit = strip_msg(message)
+
+    #num = get_num(message)
+    #unit = get_unit(message)
+
     returnUnit = get_return_unit(unit)
     convertedNum = convert(num,unit)
     result = get_string(num,unit,convertedNum,returnUnit)

@@ -12,7 +12,7 @@ client = discord.Client()
 
 @client.event # Show initial connection
 async def on_ready():
-    print(f'{client.user} has connected!')
+    print(f'{client.user} is now online!\n')
 
 errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 

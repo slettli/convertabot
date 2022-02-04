@@ -20,7 +20,7 @@ errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 
 @client.event # Message recognition and conversions
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == client.user or message.author.bot == True:
         return
     elif re.search(r'\d', message.content): # Try converting if number found, just to parse down all messages a bit
         print('Number recognized! - ' + message.content)

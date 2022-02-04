@@ -8,6 +8,8 @@ import convert as c
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
+MAX_RESPONSES = 3
+
 client = discord.Client()
 
 @client.event # Show initial connection
@@ -22,17 +24,25 @@ async def on_message(message):
         return
     elif re.search(r'\d', message.content): # Try converting if number found, just to parse down all messages a bit
         print('Number recognized! - ' + message.content)
-        response = await c.convertHandler(message.content)
+        response = await parseMessage(message,MAX_RESPONSES)
         if len(response) == 0:
             return 
-        fullResponse = ""
-        for r in response:
-            if r in errorArr: # If invalid unit or number, print to console
-                pass
-            else: # Else send converted responses to channel
-                fullResponse += r + "\n"
-        await message.channel.send(fullResponse)
-        print(fullResponse)
+
+        await message.channel.send(response)
+        print(response)
+
+# Handles message parsing, calls relevant functions/modules. Returns formatted response
+async def parseMessage(message,maxResponses):
+    response = c.convertHandler(message.content,maxResponses)
+    if len(response) == 0:
+        return response
+    fullResponse = ""
+    for r in response:
+        if r in errorArr: # If invalid unit or number, print to console
+            pass
+        else: # Else send converted responses to channel
+            fullResponse += r + "\n"
+    return fullResponse
         
 client.run(TOKEN)
 
@@ -61,4 +71,5 @@ Long term:
         - Toggle only metric > imperial og omvendt, but both ways enabled by default
             - Alle categories og mertic <--> imperial fungerer om man bruker prefix doe
     - No "fun" messages ffs. Functionality over meme factor
+    - T-Timezones...? Way fucking last if so
 '''

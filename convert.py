@@ -46,9 +46,9 @@ def num(n):
 
 # Attempts to strip message to only number and unit. Big and messy
 # First find index where unit starts
-def strip_msg(input):
+def strip_msg(input,maxResponses):
     converted = []
-    while True:
+    for i in range(maxResponses): # Limit number of parsed messages to a custom/sensible number
         number,wordIndex = get_num_strip(input)
         if isinstance(number, int) or isinstance(number, float):
             unit,toRemove = get_unit_strip(input,wordIndex)
@@ -251,9 +251,9 @@ def get_string(init_num, init_unit, return_num, return_unit):
         )
 
 # Handles conversion when provided string
-async def convertHandler(message):
+def convertHandler(message,maxResponses):
     results = []
-    toConvert = strip_msg(message) # Array of found numbers and units
+    toConvert = strip_msg(message,maxResponses) # Array of found numbers and units
     for c in toConvert:
         num = c[0]
         unit = c[1]

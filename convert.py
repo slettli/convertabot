@@ -1,5 +1,18 @@
 import re
 
+# This script is based on one from github.com/TyMick. Ty, Mick.
+
+''' 
+Convert.py is responsible for parsing strings (messages) and converting any found units, then returning responses with them as an array.
+
+TODO split this up into more sensible script files
+Separate files for:
+- Control unit file - Takes string input from bot.py and handles using the rest of the files, before returning result back to bot.py 
+- Parsing file - Extracts measurements
+- Conversion file - Converts numbers and measurements to whatever opposite is pre-determined
+- Formatting file - Formats a reply string to be posted in discord
+'''
+
 return_units = { # Which unit converts to what
         "f" : "c",
         "c" : "f",
@@ -32,7 +45,6 @@ spelled_out_units = { # Full names and short names
         "mm" : "millimeters",
 }
 
-# Most of this is shamelessly taken from TyMick. Ty, Mick.
 def num(n):
     try:
         return int(n)
@@ -41,8 +53,6 @@ def num(n):
             return float(n)
         except:
             return None
-
-# TODO: Make script strip searched part from "input"
 
 # Attempts to strip message to only number and unit. Big and messy
 # First find index where unit starts

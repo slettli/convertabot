@@ -56,6 +56,8 @@ def strip_msg(input, maxResponses):
             if unit == None:
                 break
             else:
+                if "-" in str(number) and unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
+                    number = num(str(number).strip("-"))
                 converted.append([number,unit])
 
                 input = input.replace(str(number), "", 1) # Remove already converted/extracted
@@ -81,15 +83,18 @@ def get_num_strip(input):
         indexFirstLetter += 1
         stripInput = input[0:indexFirstLetter]
     oneSpace = False # Dumbest possible fix for allowing one space only
+    oneDash = False # See above
     extractNum = [] # Extract number from string
     for c in stripInput[::-1]:
-        if c == " " and oneSpace == False:
+        if c == " " and oneSpace == False and c != "- ":
             oneSpace = True
-            continue
         elif c.isdigit():
             extractNum.append(c)
         elif c == ".":
             extractNum.append(c)
+        elif c == "-" and oneDash == False:
+            extractNum.append(c)
+            oneDash = True
         elif re.search(r"[^\d]|[^.]",c):
             break
     extractNum.reverse()

@@ -14,7 +14,7 @@ return_units = { # Which unit converts to what
         "ft" : "m",
         "m" : "ft",
         "mm" : "in",
-    }
+}
 
 spelled_out_units = { # Full names and short names
         "gal": "gallons",
@@ -30,7 +30,7 @@ spelled_out_units = { # Full names and short names
         "f" : "fahrenheit",
         "c" : "celsius",
         "mm" : "millimeters",
-    }
+}
 
 # Most of this is shamelessly taken from TyMick. Ty, Mick.
 def num(n):
@@ -46,12 +46,13 @@ def num(n):
 
 # Attempts to strip message to only number and unit. Big and messy
 # First find index where unit starts
-def strip_msg(input,maxResponses):
+def strip_msg(input, maxResponses):
     converted = []
     for i in range(maxResponses): # Limit number of parsed messages to a custom/sensible number
         number,wordIndex = get_num_strip(input)
         if isinstance(number, int) or isinstance(number, float):
             unit,toRemove = get_unit_strip(input,wordIndex)
+            unit = re.sub("[^a-zA-Z]+", "", unit)
             if unit == None:
                 break
             else:
@@ -79,26 +80,31 @@ def get_num_strip(input):
     else:                              # Or strip to with no space between num and letter
         indexFirstLetter += 1
         stripInput = input[0:indexFirstLetter]
-
+    oneSpace = False # Dumbest possible fix for allowing one space only
     extractNum = [] # Extract number from string
     for c in stripInput[::-1]:
-        if c.isdigit():
+        if c == " " and oneSpace == False:
+            oneSpace = True
+            continue
+        elif c.isdigit():
             extractNum.append(c)
         elif c == ".":
             extractNum.append(c)
+        elif re.search(r"[^\d]|[^.]",c):
+            break
     extractNum.reverse()
 
     foundNum = (''.join(extractNum))
 
     foundNum = num(foundNum)
     return foundNum,indexFirstLetter
-
+        
 # Find matching unit if any, then return index of last letter 
-def get_unit_strip(preCutInput,startIndex):
+def get_unit_strip(preCutInput, startIndex):
     input = preCutInput[startIndex:startIndex+12] # Use part after number we just split
 
     # Split at first letter
-    index_to_split = re.search(r"\s|$", input).start()
+    index_to_split = re.search(r"\s|[^\w]|$", input).start()
     if index_to_split is not None:
         unit_string = input[0:index_to_split]
         toRemove = unit_string
@@ -251,7 +257,7 @@ def get_string(init_num, init_unit, return_num, return_unit):
         )
 
 # Handles conversion when provided string
-def convertHandler(message,maxResponses):
+def convertHandler(message, maxResponses):
     results = []
     toConvert = strip_msg(message,maxResponses) # Array of found numbers and units
     for c in toConvert:

@@ -8,7 +8,7 @@ import convert as c
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
-MAX_RESPONSES = 3
+MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
 
 client = discord.Client()
 
@@ -22,9 +22,9 @@ errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 async def on_message(message):
     if message.author == client.user or message.author.bot == True:
         return
-    elif re.search(r'\d', message.content): # Try converting if number found, just to parse down all messages a bit
+    elif re.search(r'\d', message.content): # Try converting if number found, just to trim number of messages a bit
         print('Number recognized! - ' + message.content)
-        response = await parseMessage(message,MAX_RESPONSES)
+        response = parseMessage(message,MAX_RESPONSES)
         if len(response) == 0:
             return 
 
@@ -32,7 +32,7 @@ async def on_message(message):
         print(response)
 
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
-async def parseMessage(message,maxResponses):
+def parseMessage(message, maxResponses):
     response = c.convertHandler(message.content,maxResponses)
     if len(response) == 0:
         return response
@@ -51,7 +51,6 @@ TODO
 - Treat , as .
 - Add km/h and mp/h
 - Support for negative temperatures
-- Check that other message is not from a bot (to avoid infinite loops)
 
 Long term:
 - Add $converta og / commands

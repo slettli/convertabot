@@ -47,7 +47,8 @@ def parseMessage(message, maxResponses):
 client.run(TOKEN)
 
 '''
-TODO
+TODO features to be added
+- Make it handle messages that couldn't be parsed in a graceful manner (don't fill up the terminal with errors)
 - Treat , as . (but only if not mixed)
 - Add km/h and mp/h
 - Add dl, ml, ounce (oz)

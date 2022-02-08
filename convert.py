@@ -62,14 +62,23 @@ def strip_msg(input, maxResponses):
         number,wordIndex = get_num_strip(input)
         if isinstance(number, int) or isinstance(number, float):
             unit,toRemove = get_unit_strip(input,wordIndex)
+            print(unit)
             unit = re.sub("[^a-zA-Z]+", "", unit)
+            print(unit)
             if unit == None:
                 break
+            elif unit == "l":
+                if "-" in str(number) and unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
+                    number = num(str(number).strip("-"))
+                converted.append([number,unit.upper()])
+            
+                input = input.replace(str(number), "", 1) # Remove already converted/extracted
+                input = input.replace(toRemove, "", 1) # Remove already converted/extracted
             else:
                 if "-" in str(number) and unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
                     number = num(str(number).strip("-"))
                 converted.append([number,unit])
-
+            
                 input = input.replace(str(number), "", 1) # Remove already converted/extracted
                 input = input.replace(toRemove, "", 1) # Remove already converted/extracted
         else:
@@ -198,6 +207,7 @@ def get_unit(input):
                 unit_string = "inches"
             elif unit_string == "foot":
                 unit_string = "feet"
+
             return shorten_unit(unit_string).lower()
     else:
         return None

@@ -22,6 +22,8 @@ errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 async def on_message(message):
     if message.author == client.user or message.author.bot == True:
         return
+    elif message.content == "$vaffel": # Joke command as an inside joke 
+        await message.channel.send("Vi har ikke åpnet for bestillinger.")
     elif re.search(r'\d', message.content): # Try converting if number found, just to trim number of messages a bit
         print('Number recognized! - ' + message.content)
         response = parseMessage(message,MAX_RESPONSES)

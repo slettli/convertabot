@@ -2,6 +2,7 @@ import os
 import discord
 import re
 from dotenv import load_dotenv
+from discord.ext import commands
 
 import convert as c
 
@@ -10,7 +11,8 @@ TOKEN = os.getenv('TOKEN')
 
 MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
 
-client = discord.Client()
+#client = discord.Client()
+client = commands.Bot(command_prefix="!", help_command=None, status=discord.Status.idle)
 
 @client.event # Show initial connection
 async def on_ready():
@@ -18,26 +20,56 @@ async def on_ready():
 
 errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 
-@client.event # Message recognition and conversions
-async def on_message(message):
-    if message.author == client.user or message.author.bot == True:
-        return
-    elif message.content == "$vaffel": # Joke command as an inside joke 
-        await message.channel.send("Vi har ikke åpnet for bestillinger.")
-    elif re.search(r'\d', message.content): # Try converting if number found, just to trim number of messages a bit
-        print('Number recognized! - ' + message.content)
-        response = parseMessage(message,MAX_RESPONSES)
-        if len(response) == 0:
-            return 
+class Utility_Commands(commands.Cog):
+    def __init__(self,client):
+        self.client = client
+    
+    @commands.command()
+    async def paywall(self,ctx, arg=None):
+        if arg==None:
+            await ctx.channel.send("Did you forget the link?")
+        else:
+            await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
 
-        await message.channel.send(response)
-        print(response)
+    @commands.command()
+    async def unwall(self,ctx, arg):
+        if arg==None:
+            await ctx.channel.send("Did you forget the link?")
+        else:
+            await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
+
+    @commands.command()
+    async def ladder(self,ctx, arg):
+        if arg==None:
+            await ctx.channel.send("Did you forget the link?")
+        else:
+            await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
+    
+
+class Automatic_Converter(commands.Cog):
+    def __init__(self,client):
+        self.client = client
+
+    @commands.Cog.listener()
+    async def on_message(self, ctx):
+        if ctx.author == client.user or ctx.author.bot == True:
+            return
+        elif ctx.content == "$vaffel": # Joke command as an inside joke 
+            await ctx.channel.send("Vi har ikke åpnet for bestillinger.")
+        elif re.search(r'\d', ctx.content): # Try converting if number found, just to trim number of messages a bit
+            print('Number recognized! - ' + ctx.content)
+            response = parseMessage(ctx,MAX_RESPONSES)
+            if len(response) == 0:
+                return 
+
+            await ctx.channel.send(response)
+            print(response)
 
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
 def parseMessage(message, maxResponses):
     response = c.convertHandler(message.content,maxResponses)
     if len(response) == 0:
-        return response
+        return response        
     fullResponse = ""
     for r in response:
         if r in errorArr: # If invalid unit or number, print to console
@@ -45,7 +77,9 @@ def parseMessage(message, maxResponses):
         else: # Else send converted responses to channel
             fullResponse += r + "\n"
     return fullResponse
-        
+
+client.add_cog(Utility_Commands(client))
+client.add_cog(Automatic_Converter(client))
 client.run(TOKEN)
 
 '''

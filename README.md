@@ -15,3 +15,6 @@ Supported units:
 * inches
 * celsius
 * fahrenheit
+
+Commands:
+* !paywall <url> - return a 12ft.io'd reply for that link.

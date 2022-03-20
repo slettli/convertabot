@@ -8,7 +8,8 @@ from discord.ext import commands
 import convert as c
 
 load_dotenv()
-TOKEN = os.getenv('TOKEN')
+#TOKEN = os.getenv('TOKEN') # Live convertabot
+TOKEN = os.getenv('TESTTOKEN') # Converta testbot
 
 MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
 
@@ -29,6 +30,8 @@ class Utility_Commands(commands.Cog):
     async def paywall(self,ctx, arg=None):
         if arg==None:
             await ctx.channel.send("Did you forget the link?")
+        elif "12ft.io" in str(arg):
+            await ctx.channel.send("You silly goose")
         else:
             await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
 
@@ -36,6 +39,8 @@ class Utility_Commands(commands.Cog):
     async def pw(self,ctx, arg):
         if arg==None:
             await ctx.channel.send("Did you forget the link?")
+        elif "12ft.io" in str(arg):
+            await ctx.channel.send("You silly goose")
         else:
             await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
 
@@ -43,6 +48,8 @@ class Utility_Commands(commands.Cog):
     async def wall(self,ctx, arg):
         if arg==None:
             await ctx.channel.send("Did you forget the link?")
+        elif "12ft.io" in str(arg):
+            await ctx.channel.send("You silly goose")
         else:
             await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
     
@@ -55,7 +62,7 @@ class Automatic_Converter(commands.Cog):
     async def on_message(self, ctx):
         if ctx.author == client.user or ctx.author.bot == True:
             return
-        elif ctx.content in (['!paywall','!unwall','ladder'] ):
+        elif "12ft.io" in str(ctx.content):
             return
         elif ctx.content == "$vaffel": # Joke command as an inside joke 
             await ctx.channel.send("Vi har ikke åpnet for bestillinger.")

@@ -1,3 +1,4 @@
+from ast import excepthandler
 import os
 import discord
 import re
@@ -54,16 +55,21 @@ class Automatic_Converter(commands.Cog):
     async def on_message(self, ctx):
         if ctx.author == client.user or ctx.author.bot == True:
             return
+        elif ctx.content in (['!paywall','!unwall','ladder'] ):
+            return
         elif ctx.content == "$vaffel": # Joke command as an inside joke 
             await ctx.channel.send("Vi har ikke åpnet for bestillinger.")
         elif re.search(r'\d', ctx.content): # Try converting if number found, just to trim number of messages a bit
-            print('Number recognized! - ' + ctx.content)
-            response = parseMessage(ctx,MAX_RESPONSES)
-            if len(response) == 0:
-                return 
-
-            await ctx.channel.send(response)
-            print(response)
+            try:
+                response = parseMessage(ctx,MAX_RESPONSES)
+                print('Number recognized! - ' + ctx.content)           
+                if len(response) == 0:
+                    return 
+                await ctx.channel.send(response)
+                print(response)
+            except Exception as e:
+                print(f"Exception: '{e}'\nWhile parsing: '{ctx.content}'\n")
+                return
 
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
 def parseMessage(message, maxResponses):

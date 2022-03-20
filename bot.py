@@ -33,14 +33,14 @@ class Utility_Commands(commands.Cog):
             await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
 
     @commands.command()
-    async def unwall(self,ctx, arg):
+    async def pw(self,ctx, arg):
         if arg==None:
             await ctx.channel.send("Did you forget the link?")
         else:
             await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
 
     @commands.command()
-    async def ladder(self,ctx, arg):
+    async def wall(self,ctx, arg):
         if arg==None:
             await ctx.channel.send("Did you forget the link?")
         else:

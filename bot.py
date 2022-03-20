@@ -8,8 +8,8 @@ from discord.ext import commands
 import convert as c
 
 load_dotenv()
-TOKEN = os.getenv('TOKEN') # Live convertabot
-#TOKEN = os.getenv('TESTTOKEN') # Converta testbot
+#TOKEN = os.getenv('TOKEN') # Live convertabot
+TOKEN = os.getenv('TESTTOKEN') # Converta testbot
 
 MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
 
@@ -29,30 +29,46 @@ class Utility_Commands(commands.Cog):
     @commands.command()
     async def paywall(self,ctx, arg=None):
         if arg==None:
-            await ctx.channel.send("Did you forget the link?")
+            return("Did you forget the link?")
         elif "12ft.io" in str(arg):
-            await ctx.channel.send("You silly goose")
+            return("You silly goose")
         else:
-            await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
+            reply = removeContentWall(arg)
+            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
+            await ctx.channel.send(embed=embed)
 
     @commands.command()
-    async def pw(self,ctx, arg):
+    async def pw(self,ctx, arg=None):
         if arg==None:
-            await ctx.channel.send("Did you forget the link?")
+            return("Did you forget the link?")
         elif "12ft.io" in str(arg):
-            await ctx.channel.send("You silly goose")
+            return("You silly goose")
         else:
-            await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
+            reply = removeContentWall(arg)
+            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
+            await ctx.channel.send(embed=embed)
 
     @commands.command()
-    async def wall(self,ctx, arg):
+    async def wall(self,ctx, arg=None):
         if arg==None:
-            await ctx.channel.send("Did you forget the link?")
+            return("Did you forget the link?")
         elif "12ft.io" in str(arg):
-            await ctx.channel.send("You silly goose")
+            return("You silly goose")
         else:
-            await ctx.channel.send(f"Heckin frick paywalls: https://12ft.io/{arg}")
-    
+            reply = removeContentWall(arg)
+            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
+            await ctx.channel.send(embed=embed)
+
+    @commands.command()
+    async def breakwall(self,ctx, arg=None):
+        if arg==None:
+            return("Did you forget the link?")
+        elif "12ft.io" in str(arg):
+            return("You silly goose")
+        else:
+            reply = removeContentWall(arg)
+            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
+            await ctx.channel.send(embed=embed)
 
 class Automatic_Converter(commands.Cog):
     def __init__(self,client):
@@ -77,6 +93,10 @@ class Automatic_Converter(commands.Cog):
             except Exception as e:
                 print(f"Exception: '{e}'\nWhile parsing: '{ctx.content}'\n")
                 return
+
+# Attempts to circumvent content walls. Grr
+def removeContentWall(url):
+    return(f"https://12ft.io/{url}")
 
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
 def parseMessage(message, maxResponses):

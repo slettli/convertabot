@@ -8,8 +8,8 @@ from discord.ext import commands
 import convert as c
 
 load_dotenv()
-#TOKEN = os.getenv('TOKEN') # Live convertabot
-TOKEN = os.getenv('TESTTOKEN') # Converta testbot
+TOKEN = os.getenv('TOKEN') # Live convertabot
+#TOKEN = os.getenv('TESTTOKEN') # Converta testbot
 
 MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
 

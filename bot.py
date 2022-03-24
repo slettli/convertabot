@@ -8,8 +8,8 @@ from discord.ext import commands
 import convert as c
 
 load_dotenv()
-#TOKEN = os.getenv('TOKEN') # Live convertabot
-TOKEN = os.getenv('TESTTOKEN') # Converta testbot
+TOKEN = os.getenv('TOKEN') # Live convertabot
+#TOKEN = os.getenv('TESTTOKEN') # Converta testbot
 
 MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
 
@@ -32,10 +32,11 @@ class Utility_Commands(commands.Cog):
             return("Did you forget the link?")
         elif "12ft.io" in str(arg):
             return("You silly goose")
+        elif "facebook.com/l.php?u=" in str(arg):
+            return("You silly goose")
         else:
             reply = removeContentWall(arg)
-            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
-            await ctx.channel.send(embed=embed)
+            await ctx.channel.send(embed=reply)
 
     @commands.command()
     async def pw(self,ctx, arg=None):
@@ -43,10 +44,11 @@ class Utility_Commands(commands.Cog):
             return("Did you forget the link?")
         elif "12ft.io" in str(arg):
             return("You silly goose")
+        elif "facebook.com/l.php?u=" in str(arg):
+            return("You silly goose")
         else:
             reply = removeContentWall(arg)
-            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
-            await ctx.channel.send(embed=embed)
+            await ctx.channel.send(embed=reply)
 
     @commands.command()
     async def wall(self,ctx, arg=None):
@@ -54,10 +56,11 @@ class Utility_Commands(commands.Cog):
             return("Did you forget the link?")
         elif "12ft.io" in str(arg):
             return("You silly goose")
+        elif "facebook.com/l.php?u=" in str(arg):
+            return("You silly goose")
         else:
             reply = removeContentWall(arg)
-            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
-            await ctx.channel.send(embed=embed)
+            await ctx.channel.send(embed=reply)
 
     @commands.command()
     async def breakwall(self,ctx, arg=None):
@@ -65,10 +68,11 @@ class Utility_Commands(commands.Cog):
             return("Did you forget the link?")
         elif "12ft.io" in str(arg):
             return("You silly goose")
+        elif "facebook.com/l.php?u=" in str(arg):
+            return("You silly goose")
         else:
             reply = removeContentWall(arg)
-            embed = discord.Embed(title="12ft.io'd link", url=f"{reply}", description = "Grr I frickin hate content walls")
-            await ctx.channel.send(embed=embed)
+            await ctx.channel.send(embed=reply)
 
 class Automatic_Converter(commands.Cog):
     def __init__(self,client):
@@ -79,6 +83,8 @@ class Automatic_Converter(commands.Cog):
         if ctx.author == client.user or ctx.author.bot == True:
             return
         elif "12ft.io" in str(ctx.content):
+            return
+        elif "facebook.com/l.php?u=" in str(ctx.content):
             return
         elif ctx.content == "$vaffel": # Joke command as an inside joke 
             await ctx.channel.send("Vi har ikke åpnet for bestillinger.")
@@ -96,7 +102,12 @@ class Automatic_Converter(commands.Cog):
 
 # Attempts to circumvent content walls. Grr
 def removeContentWall(url):
-    return(f"https://12ft.io/{url}")
+    ladder = f"https://12ft.io/{url}"
+    fb = f"https://facebook.com/l.php?u={url}"
+    embed = discord.Embed(description = "<a:PotatoTriggered:841573748146831440> Grr I heckin hate content walls")
+    embed.add_field(name='12ft.io' ,value=f"[link]({ladder})", inline=True)
+    embed.add_field(name='FB redirect' ,value=f"[link]({fb})", inline=True)
+    return(embed)
 
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
 def parseMessage(message, maxResponses):

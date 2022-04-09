@@ -1,3 +1,4 @@
+from mimetypes import init
 import re
 
 # This script is based on one from github.com/TyMick. Ty, Mick.
@@ -20,6 +21,7 @@ return_units = { # Which unit converts to what
         "L": "gal",
         "lbs": "kg",
         "kg": "lbs",
+        "lb": "kg",
         "mi": "km",
         "km": "mi",
         "cm" : "in",
@@ -33,6 +35,7 @@ spelled_out_units = { # Full names and short names
         "gal": "gallons",
         "L": "liters",
         "lbs": "pounds",
+        "lb": "pound",
         "kg": "kilograms",
         "mi": "miles",
         "km": "kilometers",
@@ -135,7 +138,7 @@ def get_unit_strip(preCutInput, startIndex):
     else:
         return None
     # Search for shorthand form
-    if re.search(r"^(gal|L|lbs|kg|mi|km|cm|in|m|ft|c|f|mm)$", unit_string, re.I):
+    if re.search(r"^(gal|L|lbs|lb|kg|mi|km|cm|in|m|ft|c|f|mm)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return unit_string.upper(),toRemove
         else:
@@ -187,7 +190,7 @@ def get_unit(input):
     else:
         return None
     # Search for shorthand form
-    if re.search(r"^(gal|L|lbs|kg|mi|km|cm|in|m|ft)$", unit_string, re.I):
+    if re.search(r"^(gal|L|lbs|lb|kg|mi|km|cm|in|m|ft)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return unit_string.upper()
         else:
@@ -241,7 +244,7 @@ def convert(init_num, init_unit):
         return round(init_num * GAL_TO_L, 2)
     elif init_unit == "L":
         return round(init_num / GAL_TO_L, 2)
-    elif init_unit == "lbs":
+    elif init_unit == "lbs" or init_unit == "lb":
         return round(init_num * LBS_TO_KG, 2)
     elif init_unit == "kg":
         return round(init_num / LBS_TO_KG, 2)

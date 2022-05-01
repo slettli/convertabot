@@ -6,7 +6,7 @@ Alternatively: *helping friends across the pond communicate.*
 
 ## Usage
 
-Convertabot will attempt to automatically detect and convert supported units:
+Convertabot will attempt to automatically detect and convert supported units, for a maximum of three conversions from a single message:
 ```
 American chatter: 
 I just love myself some 35 pounds in this 94f weather!

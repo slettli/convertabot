@@ -12,10 +12,10 @@ American chatter:
 I just love myself some 35 pounds in this 94f weather!
 
 European chatter: 
-What? Are you boiling 35 quid mate?
+What? Are you boiling 35 quid, mate?
 
 Convertabot:
-35 pound is 15.88 kilograms
+35 pounds is 15.88 kilograms
 94 fahrenheit is 34.45 celsius
 ```
 All the confusion is cleared up!

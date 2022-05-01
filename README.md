@@ -6,7 +6,7 @@ Alternatively: *helping friends across the pond communicate.*
 
 ## Usage
 
-Convertabot will attempt to automatically detect and convert supported units, for a maximum of three conversions from a single message:
+Convertabot will attempt to automatically detect and convert supported units:
 ```
 American chatter: 
 I just love myself some 35 pounds in this 94f weather!
@@ -19,6 +19,8 @@ Convertabot:
 94 fahrenheit is 34.45 celsius
 ```
 All the confusion is cleared up!
+
+Note that Convertabot will only convert the first three units it detects in a single message, to avoid filling the server chat with conversions.
 
 ## Supported units
 

@@ -63,18 +63,14 @@ client.run(TOKEN)
 '''
 TODO features to be added
 - Treat , as . (but only if not mixed)
-- Add km/h and mp/h
 - Add dl, ml, ounce (oz)
 - Add verbose mode
 - A foot, an inch, a meter etc
-
-    - Also focus on school
 
 After above implemented, stop for a bit and focus on making experience better.
     - Like commands
         Including manual mode
     - Don't worry about new units for a while
-
 
 Long term:
 - Add $converta og / commands

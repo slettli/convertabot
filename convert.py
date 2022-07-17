@@ -170,59 +170,6 @@ def get_unit_strip(preCutInput, startIndex):
             return shorten_unit(unit_string).lower(),toRemove
     else:
         return None
-'''
-def get_num(input):
-    # Split at first letter
-    index_to_split = re.search(r"[A-Za-z]", input).start()
-    if index_to_split == 0:
-        return 1
-    elif index_to_split:
-        num_string = input[0:index_to_split]
-    else:
-        num_string = input
-
-    # Check for fraction
-    fraction_match = re.search(r"^(\d*\.?\d*)\/(\d*\.?\d*)$", num_string)
-    if fraction_match:
-        try:
-            return num(num(fraction_match.group(1)) / num(fraction_match.group(2)))
-        except:
-            return None
-
-    return num(num_string)
-
-def get_unit(input):
-    # Split at first letter
-    index_to_split = re.search(r"[A-Za-z]", input).start()
-    if index_to_split is not None:
-        unit_string = input[index_to_split : len(input)]
-    else:
-        return None
-    # Search for shorthand form
-    if re.search(r"^(gal|L|lbs|lb|kg|mi|km|cm|in|m|ft)$", unit_string, re.I):
-        if re.search(r"^L$", unit_string, re.I):
-            return unit_string.upper()
-        else:
-            return unit_string.lower()
-    # Search for spelled out form
-    elif re.search(r"^(gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot)$", unit_string, re.I):
-        if re.search(r"^L$", unit_string, re.I):
-            return shorten_unit(unit_string).upper()
-        else:
-            unit_string = unit_string.lower()
-            # A bunch of special clauses
-            # Add s if necessary, so rest of script doesn't break. Very lazy
-            if (unit_string == "gallon" or unit_string == "kilogram" or unit_string == "centimeter" or unit_string == "meter" or unit_string == "mile" or unit_string == "centimeter" or unit_string == "liter"):
-                unit_string += "s"
-            # Special clause for inches
-            elif unit_string == "inch":
-                unit_string = "inches"
-            elif unit_string == "foot":
-                unit_string = "feet"
-
-            return shorten_unit(unit_string).lower()
-    else:
-        return None'''
 
 def get_return_unit(init_unit):
     return return_units.get(init_unit)

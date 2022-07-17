@@ -29,6 +29,9 @@ return_units = { # Which unit converts to what
         "ft" : "m",
         "m" : "ft",
         "mm" : "in",
+        "kph" : "mph",
+        "mph" : "kph",
+        "kmh" : "mph"
 }
 
 spelled_out_units = { # Full names and short names
@@ -46,6 +49,9 @@ spelled_out_units = { # Full names and short names
         "f" : "fahrenheit",
         "c" : "celsius",
         "mm" : "millimeters",
+        "kph" : "Kilometers per hour",
+        "kmh" : "Kilometers per hour",
+        "mph" : "Miles per hour"
 }
 
 def num(n):
@@ -138,13 +144,16 @@ def get_unit_strip(preCutInput, startIndex):
     else:
         return None
     # Search for shorthand form
-    if re.search(r"^(gal|L|lbs|lb|kg|mi|km|cm|in|m|ft|c|f|mm)$", unit_string, re.I):
+    if re.search(r"^(k(m|p)\/?h|mp\/?h|gal|L|lbs|lb|kg|mi|km|cm|in|m|ft|c|f|mm)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return unit_string.upper(),toRemove
+        elif unit_string == "kp/h" or unit_string == "km/h" or unit_string == "mp/h":
+            unit_string = unit_string.replace('/','')
+            return unit_string.lower(),toRemove
         else:
             return unit_string.lower(),toRemove
     # Search for spelled out form
-    elif re.search(r"^(gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot|fahrenheit|celsius|millimeters?)$", unit_string, re.I):
+    elif re.search(r"^(kilometers? per hour|miles? per hour|gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot|fahrenheit|celsius|millimeters?)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
             return shorten_unit(unit_string).upper(),toRemove
         else:
@@ -161,7 +170,7 @@ def get_unit_strip(preCutInput, startIndex):
             return shorten_unit(unit_string).lower(),toRemove
     else:
         return None
-
+'''
 def get_num(input):
     # Split at first letter
     index_to_split = re.search(r"[A-Za-z]", input).start()
@@ -213,7 +222,7 @@ def get_unit(input):
 
             return shorten_unit(unit_string).lower()
     else:
-        return None
+        return None'''
 
 def get_return_unit(init_unit):
     return return_units.get(init_unit)
@@ -236,34 +245,35 @@ def convert(init_num, init_unit):
     IN_TO_CM = 2.54
     FT_TO_M = 0.3048 
 
-    if init_unit == "f":
-        return round((init_num - 32) *0.5556 , 2)
-    elif init_unit == "c":
-        return round((init_num * 1.8) + 32, 2)
-    elif init_unit == "gal":
-        return round(init_num * GAL_TO_L, 2)
-    elif init_unit == "L":
-        return round(init_num / GAL_TO_L, 2)
-    elif init_unit == "lbs" or init_unit == "lb":
-        return round(init_num * LBS_TO_KG, 2)
-    elif init_unit == "kg":
-        return round(init_num / LBS_TO_KG, 2)
-    elif init_unit == "mi":
-        return round(init_num * MI_TO_KM, 2)
-    elif init_unit == "km":
-        return round(init_num / MI_TO_KM, 2)
-    elif init_unit == "in":
-        return round(init_num * IN_TO_CM, 2)
-    elif init_unit == "cm":
-        return round(init_num / IN_TO_CM, 2)
-    elif init_unit == "ft":
-        return round(init_num * FT_TO_M, 2)
-    elif init_unit == "m":
-        return round(init_num / FT_TO_M, 2)
-    elif init_unit == "mm":
-        return round((init_num / 10) / IN_TO_CM, 4)
-    else:
-        return None
+    match init_unit:
+        case "f":
+            return round((init_num - 32) *0.5556 , 2)
+        case "c":
+            return round((init_num * 1.8) + 32, 2)
+        case "gal":
+            return round(init_num * GAL_TO_L, 2)
+        case "L":
+            return round(init_num / GAL_TO_L, 2)
+        case ("lbs"|"lb"):
+            return round(init_num * LBS_TO_KG, 2)
+        case "kg":
+            return round(init_num / LBS_TO_KG, 2)
+        case ("mi"|"mph"):
+            return round(init_num * MI_TO_KM, 2)
+        case ("km"|"kph"|"kmh"):
+            return round(init_num / MI_TO_KM, 2)
+        case "in":
+            return round(init_num * IN_TO_CM, 2)
+        case "cm":
+            return round(init_num / IN_TO_CM, 2)
+        case "ft":
+            return round(init_num * FT_TO_M, 2)
+        case "m":
+            return round(init_num / FT_TO_M, 2)
+        case "mm":
+            return round((init_num / 10) / IN_TO_CM, 4)
+        case _:
+            return None
 
 def get_string(init_num, init_unit, return_num, return_unit):
     if init_num is None:

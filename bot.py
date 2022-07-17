@@ -22,58 +22,6 @@ async def on_ready():
 
 errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 
-class Utility_Commands(commands.Cog):
-    def __init__(self,client):
-        self.client = client
-    
-    @commands.command()
-    async def paywall(self,ctx, arg=None):
-        if arg==None:
-            return("Did you forget the link?")
-        elif "12ft.io" in str(arg):
-            return("You silly goose")
-        elif "facebook.com/l.php?u=" in str(arg):
-            return("You silly goose")
-        else:
-            reply = removeContentWall(arg)
-            await ctx.channel.send(embed=reply)
-
-    @commands.command()
-    async def pw(self,ctx, arg=None):
-        if arg==None:
-            return("Did you forget the link?")
-        elif "12ft.io" in str(arg):
-            return("You silly goose")
-        elif "facebook.com/l.php?u=" in str(arg):
-            return("You silly goose")
-        else:
-            reply = removeContentWall(arg)
-            await ctx.channel.send(embed=reply)
-
-    @commands.command()
-    async def wall(self,ctx, arg=None):
-        if arg==None:
-            return("Did you forget the link?")
-        elif "12ft.io" in str(arg):
-            return("You silly goose")
-        elif "facebook.com/l.php?u=" in str(arg):
-            return("You silly goose")
-        else:
-            reply = removeContentWall(arg)
-            await ctx.channel.send(embed=reply)
-
-    @commands.command()
-    async def breakwall(self,ctx, arg=None):
-        if arg==None:
-            return("Did you forget the link?")
-        elif "12ft.io" in str(arg):
-            return("You silly goose")
-        elif "facebook.com/l.php?u=" in str(arg):
-            return("You silly goose")
-        else:
-            reply = removeContentWall(arg)
-            await ctx.channel.send(embed=reply)
-
 class Automatic_Converter(commands.Cog):
     def __init__(self,client):
         self.client = client
@@ -81,10 +29,6 @@ class Automatic_Converter(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, ctx):
         if ctx.author == client.user or ctx.author.bot == True:
-            return
-        elif "12ft.io" in str(ctx.content):
-            return
-        elif "facebook.com/l.php?u=" in str(ctx.content):
             return
         elif ctx.content == "$vaffel": # Joke command as an inside joke 
             await ctx.channel.send("Vi har ikke åpnet for bestillinger.")
@@ -100,15 +44,6 @@ class Automatic_Converter(commands.Cog):
                 print(f"Exception: '{e}'\nWhile parsing: '{ctx.content}'\n")
                 return
 
-# Attempts to circumvent content walls. Grr
-def removeContentWall(url):
-    ladder = f"https://12ft.io/{url}"
-    fb = f"https://facebook.com/l.php?u={url}"
-    embed = discord.Embed(description = "<a:PotatoTriggered:841573748146831440> Grr I heckin hate content walls")
-    embed.add_field(name='12ft.io' ,value=f"[link]({ladder})", inline=True)
-    embed.add_field(name='FB redirect' ,value=f"[link]({fb})", inline=True)
-    return(embed)
-
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
 def parseMessage(message, maxResponses):
     response = c.convertHandler(message.content,maxResponses)
@@ -122,7 +57,6 @@ def parseMessage(message, maxResponses):
             fullResponse += r + "\n"
     return fullResponse
 
-client.add_cog(Utility_Commands(client))
 client.add_cog(Automatic_Converter(client))
 client.run(TOKEN)
 

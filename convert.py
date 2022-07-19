@@ -1,17 +1,7 @@
-from mimetypes import init
 import re
-
-# This script is based on one from github.com/TyMick. Ty, Mick.
 
 ''' 
 Convert.py is responsible for parsing strings (messages) and converting any found units, then returning responses with them as an array.
-
-TODO split this up into more sensible script files
-Separate files for:
-- Control unit file - Takes string input from bot.py and handles using the rest of the files, before returning result back to bot.py 
-- Parsing file - Extracts measurements
-- Conversion file - Converts numbers and measurements to whatever opposite is pre-determined
-- Formatting file - Formats a reply string to be posted in discord
 '''
 
 return_units = { # Which unit converts to what
@@ -110,6 +100,7 @@ def get_num_strip(input):
     else:                              # Or strip to with no space between num and letter
         indexFirstLetter += 1
         stripInput = input[0:indexFirstLetter]
+
     oneSpace = False # Dumbest possible fix for allowing one space only
     oneDash = False # See above
     extractNum = [] # Extract number from string
@@ -120,6 +111,8 @@ def get_num_strip(input):
             extractNum.append(c)
         elif c == ".":
             extractNum.append(c)
+        elif c == ",":
+            extractNum.append(c)
         elif c == "-" and oneDash == False:
             extractNum.append(c)
             oneDash = True
@@ -128,7 +121,8 @@ def get_num_strip(input):
     extractNum.reverse()
 
     foundNum = (''.join(extractNum))
-
+    if("," in foundNum):
+        foundNum = foundNum.replace(",",".")
     foundNum = num(foundNum)
     return foundNum,indexFirstLetter
         
@@ -160,7 +154,11 @@ def get_unit_strip(preCutInput, startIndex):
             unit_string = unit_string.lower()
             # A bunch of special clauses
             # Add s if necessary, so rest of script doesn't break. Very lazy
-            if (unit_string == "gallon" or unit_string == "kilogram" or unit_string == "centimeter" or unit_string == "meter" or unit_string == "mile" or unit_string == "centimeter" or unit_string == "liter" or unit_string =="millimeter"):
+            if unit_string == "kilometer per hour":
+                unit_string = "kilometers per hour"
+            elif unit_string == "mile per hour":
+                unit_string = "miles per hour"
+            elif (unit_string in ["gallon", "kilogram", "centimeter", "meter", "mile", "centimeter", "liter", "millimeter"]):
                 unit_string += "s"
             # Special clause for inches
             elif unit_string == "inch":
@@ -246,14 +244,15 @@ def convertHandler(message, maxResponses):
     results = []
     toConvert = strip_msg(message,maxResponses) # Array of found numbers and units
     for c in toConvert:
-        num = c[0]
-        unit = c[1]
-        returnUnit = get_return_unit(unit)
-        convertedNum = convert(num,unit)
-        result = get_string(num,unit,convertedNum,returnUnit)
-        results.append(result)
-
-    #num = get_num(message) // old safe method
-    #unit = get_unit(message) // old safe method
+        if ("," in c and "." in c):
+            result = get_string(None,None,None,None)
+            results.append(result)
+        else:
+            num = c[0]
+            unit = c[1]
+            returnUnit = get_return_unit(unit)
+            convertedNum = convert(num,unit)
+            result = get_string(num,unit,convertedNum,returnUnit)
+            results.append(result)
 
     return results

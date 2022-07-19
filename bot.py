@@ -59,36 +59,3 @@ def parseMessage(message, maxResponses):
 
 client.add_cog(Automatic_Converter(client))
 client.run(TOKEN)
-
-'''
-TODO features to be added
-- Treat , as . (but only if not mixed)
-- Add dl, ml, ounce (oz)
-- Add verbose mode
-- A foot, an inch, a meter etc
-
-After above implemented, stop for a bit and focus on making experience better.
-    - Like commands
-        Including manual mode
-    - Don't worry about new units for a while
-
-Long term:
-- Add $converta og / commands
-    - Help
-        - Shows commands, short explanation of functionality
-    - Units
-        - Lists supported units
-    - Volumenheter
-    - Saved server configs
-        - Required for below options
-    - Toggle automatic mode on/off
-        - Må først bruke command prefix by default
-        - Toggle categories of units on/off
-            - I.e. bare automatisk convertere lengde, mål, vekt, volum, temp
-            - Må dele opp listene etter kategori.
-            - Alle categories og mertic <--> imperial fungerer om man bruker prefix doe
-        - Toggle only metric > imperial og omvendt, but both ways enabled by default
-            - Alle categories og mertic <--> imperial fungerer om man bruker prefix doe
-    - No "fun" messages ffs. Functionality over meme factor
-    - T-Timezones...? Way fucking last if so
-'''

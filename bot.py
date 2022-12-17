@@ -1,4 +1,5 @@
 import os
+import datetime
 import hikari
 import lightbulb
 import re
@@ -13,6 +14,7 @@ errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
 load_dotenv()
 token = os.getenv('TOKEN') # Converta testbot
 bot = lightbulb.BotApp(token, intents = hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
+start_time: datetime.datetime = datetime.datetime.now()
 
 @bot.listen()
 async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse messages sent in servers
@@ -37,6 +39,18 @@ async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse mes
 @lightbulb.implements(lightbulb.SlashCommand)
 async def poke(ctx: lightbulb.Context) -> None: 
     await ctx.respond("Stop that!")
+
+# Uptime for the bot.
+@bot.command()
+@lightbulb.command("uptime", "Time since last crash.")
+@lightbulb.implements(lightbulb.SlashCommand)
+async def uptime(ctx: lightbulb.Context) -> None: 
+    dt = datetime.datetime.now() - start_time
+    dt -= datetime.timedelta(microseconds=dt.microseconds)
+    if (dt.days > 0):
+        await ctx.respond(f"`{str(dt)}` (days, hours, minutes, seconds)")
+    else:
+        await ctx.respond(f"`{str(dt)}` (hours, minutes, seconds)")
 
 # Same as the auto parser. Will attempt to convert measurements imperial->metric or vice versa.
 @bot.command()

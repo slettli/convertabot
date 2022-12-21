@@ -89,7 +89,7 @@ def strip_msg(input, maxResponses):
 def get_num_strip(input):
     # Split at first number followed by a letter
     try: 
-        indexFirstLetter = re.search(r"\d\s[A-Za-z]|\d[A-Z[a-z]", input).start()
+        indexFirstLetter = re.search(r"\d\s[A-Za-z]|\d[A-Za-z]", input).start()
     except:
         return None,None
 

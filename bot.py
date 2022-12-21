@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 import convert as c
 
-AUTO_CONVERT = True
 MAX_RESPONSES = 3 # Default max num of conversions the bot will do from a single message, to avoid filling up chat
 
 # Initial setup
@@ -19,7 +18,7 @@ start_time: datetime.datetime = datetime.datetime.now()
 # Parse incoming messages if auto-conversion enabled
 @bot.listen()
 async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse messages sent in servers
-    if not AUTO_CONVERT or not ctx.is_human:
+    if not ctx.is_human:
         return 
         
     if re.search(r'\d', ctx.message.content): # Try converting if number found, just to trim number of messages a bit
@@ -30,7 +29,6 @@ async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse mes
                 return
 
             await bot.rest.create_message(ctx.channel_id, response)
-           # print(response)
         except Exception as e:
             print(f"Exception: '{e}'\nWhile parsing: '{ctx.message.content}'\n")
             return
@@ -39,7 +37,7 @@ async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse mes
 
 # Check if the bot is online, or just waste computing resources.
 @bot.command()
-@lightbulb.command("poke", "Poke Covertabot.")
+@lightbulb.command("poke", "Poke Convertabot.")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def poke(ctx: lightbulb.Context) -> None: 
     await ctx.respond("Stop that!")
@@ -56,17 +54,20 @@ async def uptime(ctx: lightbulb.Context) -> None:
     else:
         await ctx.respond(f"`{str(dt)}` (hours, minutes, seconds)")
 
-# Check if the bot is online, or just waste computing resources.
+# Set a max number of conversions from a single message
 @bot.command()
-@lightbulb.option("max", "Max number of conversions from one message", int)
+@lightbulb.option("max", "Max number of conversions from one message, 1-20", int)
 @lightbulb.command("set_max", "Set max number of conversions from one message, to avoid filling chat.")
 @lightbulb.implements(lightbulb.SlashCommand)
-async def poke(ctx: lightbulb.Context) -> None: 
-    global MAX_RESPONSES
-    MAX_RESPONSES = ctx.options.max
-    await ctx.respond(f"The new conversions limit per message is now {MAX_RESPONSES}!")
+async def set_max(ctx: lightbulb.Context) -> None: 
+    if ctx.options.max > 20 or ctx.options.max < 1:
+        await ctx.respond("Please set a value between 1 and 20.")
+    else:
+        global MAX_RESPONSES
+        MAX_RESPONSES = ctx.options.max
+        await ctx.respond(f"The new conversions limit per message is now {MAX_RESPONSES}.")
 
-# Same as the auto parser. Will attempt to convert measurements imperial->metric or vice versa.
+# Same as the auto parser. Will attempt to convert measurements imperial -> metric or vice versa.
 @bot.command()
 @lightbulb.option("value", "Value to convert, use . for decimal notation", float)
 @lightbulb.option("unit", "Unit to convert from", str)
@@ -79,8 +80,8 @@ async def convert(ctx: lightbulb.Context) -> None:
     result = parseMessage(comb, 1)
     await ctx.respond(result)
 
-# Convert from one unit to another one, of the user's choosing.
-@bot.command()
+# Convert one unit to another unit, user's choice.
+#@bot.command()
 @lightbulb.option("value", "Value to convert, use . for decimal notation", float)
 @lightbulb.option("unit_1", "Unit to convert FROM", str)
 @lightbulb.option("unit_2", "Final unit after conversion", str)
@@ -105,6 +106,7 @@ def parseMessage(msg, maxResponses):
     for r in response:
         if r: 
             fullResponse += r + "\n"
+
     return fullResponse
 
 bot.run()

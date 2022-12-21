@@ -269,5 +269,3 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
-
-print(convertHandler("it's - 15f here \n it's - 15m here \n it's - 15in here and finally 20l for your 15 gallons",4))

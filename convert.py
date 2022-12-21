@@ -62,9 +62,7 @@ def strip_msg(input, maxResponses):
 
         if isinstance(number, int) or isinstance(number, float):
             unit,toRemove = get_unit_strip(input,wordIndex)
-            print(unit)
             unit = re.sub("[^a-zA-Z]+", "", unit)
-            print(unit)
             if unit == None:
                 break
             elif unit == "l":
@@ -269,7 +267,3 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
-
-print(convertHandler("I like - 15 c and",2))
-print(convertHandler("I like -15 c and",2))
-print(convertHandler("I like - 15c and",2)) 

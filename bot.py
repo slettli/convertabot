@@ -7,31 +7,35 @@ from dotenv import load_dotenv
 
 import convert as c
 
-MAX_RESPONSES = 3 # Max num of conversions the bot will do from a single message, to avoid filling up chat
+AUTO_CONVERT = True
+MAX_RESPONSES = 3 # Default max num of conversions the bot will do from a single message, to avoid filling up chat
 
-errorArr = ["Invalid number and unit", "Invalid number", "Invalid unit"]
-
+# Initial setup
 load_dotenv()
 token = os.getenv('TOKEN') # Converta testbot
 bot = lightbulb.BotApp(token, intents = hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
 start_time: datetime.datetime = datetime.datetime.now()
 
+# Parse incoming messages if auto-conversion enabled
 @bot.listen()
 async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse messages sent in servers
-    if not ctx.is_human:
-        return
+    if not AUTO_CONVERT or not ctx.is_human:
+        return 
         
     if re.search(r'\d', ctx.message.content): # Try converting if number found, just to trim number of messages a bit
         try:
-            response = parseMessage(ctx.message.content,MAX_RESPONSES)
-            #print('Number recognized! - ' + ctx.message.content)           
-            if len(response) == 0: # If conversion failed
-                return 
+            response = parseMessage(ctx.message.content , MAX_RESPONSES)
+
+            if not response:
+                return
+
             await bot.rest.create_message(ctx.channel_id, response)
            # print(response)
         except Exception as e:
             print(f"Exception: '{e}'\nWhile parsing: '{ctx.message.content}'\n")
             return
+
+# Commands
 
 # Check if the bot is online, or just waste computing resources.
 @bot.command()
@@ -93,13 +97,13 @@ async def manualconvert(ctx: lightbulb.Context) -> None:
 # Handles message parsing, calls relevant functions/modules. Returns formatted response
 def parseMessage(msg, maxResponses):
     response = c.convertHandler(msg,maxResponses)
-    if len(response) == 0:
-        return response        
-    fullResponse = ""
+
+    if not response: # If no response found
+        return 
+
+    fullResponse = "" # Filter out and format successful conversions
     for r in response:
-        if r in errorArr: # If invalid unit or number, print to console
-            pass
-        else: # Else send converted responses to channel
+        if r: 
             fullResponse += r + "\n"
     return fullResponse
 

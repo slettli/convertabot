@@ -58,36 +58,36 @@ def num(n):
 def strip_msg(input, maxResponses):
     converted = []
     looped = False 
-    while maxResponses != 0: # Limit number of parsed messages to a custom/sensible number
-        print(input + "\n")
+
+    # Find a max number of units to convert, not including duplicates
+    while maxResponses != 0: 
         number,wordIndex = get_num_strip(input)
 
-        if isinstance(number, int) or isinstance(number, float):
-            unit,removeIndex = get_unit_strip(input,wordIndex)
-            unit = re.sub("[^a-zA-Z]+", "", unit)
-            if not unit:
-                break
-            
-            if "-" in str(number) :
-                if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
-                    number = num(str(number).strip("-"))
-
-            # Remove processed input from string
-            input = input[wordIndex+removeIndex:]
-
-            if [number,unit] not in converted:
-                if unit == "l":
-                    converted.append([number,unit.upper()])
-                else:
-                    converted.append([number,unit])
-                maxResponses -= 1
-            elif looped:
-                maxResponses -= 1
-            else: # Prevent infinite loop if processing same or identical data/measurements twice
-                looped = True 
-            
-        else:
+        if not isinstance(number, int) and not isinstance(number, float):
             break
+
+        unit,removeIndex = get_unit_strip(input,wordIndex)
+        unit = re.sub("[^a-zA-Z]+", "", unit)
+
+        if not unit:
+            break
+        
+        if "-" in str(number) :
+            if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
+                number = num(str(number).strip("-"))
+
+        if [number,unit] not in converted:
+            if unit == "l": # Special clause for liters
+                unit = unit.upper()
+            converted.append([number,unit])
+            maxResponses -= 1
+        elif looped:
+            maxResponses -= 1
+        else: # Prevent infinite loop if processing same or identical data/measurements twice
+            looped = True 
+
+        # Remove processed input from input string
+        input = input[wordIndex+removeIndex:]
 
     return converted
 
@@ -110,7 +110,9 @@ def get_num_strip(input):
     oneSpace = False # Dumbest possible fix for allowing one space only
     oneDash = False # See above
     extractNum = [] # Extract number from string
-    for c in stripInput[::-1]:
+
+    # Iterate over string and save numbers, allowing for one dash and whitespace
+    for c in stripInput[::-1]: 
         if c == " " and oneSpace == False:
             if extractNum: # Allow whitespace at first index if bad slice
                 oneSpace = True
@@ -125,15 +127,17 @@ def get_num_strip(input):
             oneDash = True
         elif re.search(r"[^\d]|[^.]",c):
             break
+
     extractNum.reverse()
 
     foundNum = (''.join(extractNum))
     if("," in foundNum):
         foundNum = foundNum.replace(",",".")
     foundNum = num(foundNum)
-    return foundNum,indexFirstLetter
+    
+    return foundNum, indexFirstLetter
         
-# Find matching unit if any, then return index of last letter 
+# Find matching unit if any, then return index of that 
 def get_unit_strip(preCutInput, startIndex):
     input = preCutInput[startIndex:startIndex+12] # Use part after number we just split
 
@@ -178,6 +182,7 @@ def get_unit_strip(preCutInput, startIndex):
 
     return unit_string, index_to_split
 
+# Methods for extracting target unit from dict
 def get_return_unit(init_unit):
     return return_units.get(init_unit)
 
@@ -189,6 +194,7 @@ def shorten_unit(unit):
          if unit == value:
              return key
 
+# Converts values from one unit to another
 def convert(init_num, init_unit):
     if not init_num:
         return None
@@ -229,41 +235,39 @@ def convert(init_num, init_unit):
         case _:
             return None
 
+# Formats return strings
 def get_string(init_num, init_unit, return_num, return_unit):
-    if not init_num:
-        if not init_unit:
-            return "Invalid number and unit"
-        else:
-            return "Invalid number"
-    elif not init_unit:
-        return "Invalid unit"
-    else:
-        return (
-            str(init_num)
-            + " "
-            + spell_out_unit(init_unit)
-            + " is "
-            + str(return_num)
-            + " "
-            + spell_out_unit(return_unit)
-        )
+    if not init_num or not init_unit:
+            return None
+            
+    return (
+        str(init_num)
+        + " "
+        + spell_out_unit(init_unit)
+        + " is "
+        + str(return_num)
+        + " "
+        + spell_out_unit(return_unit)
+    )
 
 # Handles conversion when provided string
 def convertHandler(message, maxResponses):
     results = []
     toConvert = strip_msg(message,maxResponses) # Array of found numbers and units
     for c in toConvert:
-        if ("," in c and "." in c):
-            result = get_string(None,None,None,None)
-            results.append(result)
-        else:
-            num = c[0]
-            unit = c[1]
-            returnUnit = get_return_unit(unit)
-            convertedNum = convert(num,unit)
-            result = get_string(num,unit,convertedNum,returnUnit)
+        if ("," in c and "." in c): # Skip if funky number 
+            continue
+
+        num = c[0]
+        unit = c[1]
+        returnUnit = get_return_unit(unit)
+        convertedNum = convert(num,unit)
+
+        result = get_string(num,unit,convertedNum,returnUnit)
+
+        if result:
             results.append(result)
 
     return results
 
-print(convertHandler("it's - 15f here \n it's - 15m here \n it's - 15in here",5))
+print(convertHandler("it's - 15f here \n it's - 15m here \n it's - 15in here and finally 20l for your 15 gallons",4))

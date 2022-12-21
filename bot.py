@@ -24,11 +24,11 @@ async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse mes
     if re.search(r'\d', ctx.message.content): # Try converting if number found, just to trim number of messages a bit
         try:
             response = parseMessage(ctx.message.content,MAX_RESPONSES)
-            print('Number recognized! - ' + ctx.message.content)           
+            #print('Number recognized! - ' + ctx.message.content)           
             if len(response) == 0: # If conversion failed
                 return 
             await bot.rest.create_message(ctx.channel_id, response)
-            print(response)
+           # print(response)
         except Exception as e:
             print(f"Exception: '{e}'\nWhile parsing: '{ctx.message.content}'\n")
             return
@@ -52,13 +52,23 @@ async def uptime(ctx: lightbulb.Context) -> None:
     else:
         await ctx.respond(f"`{str(dt)}` (hours, minutes, seconds)")
 
+# Check if the bot is online, or just waste computing resources.
+@bot.command()
+@lightbulb.option("max", "Max number of conversions from one message", int)
+@lightbulb.command("set_max", "Set max number of conversions from one message, to avoid filling chat.")
+@lightbulb.implements(lightbulb.SlashCommand)
+async def poke(ctx: lightbulb.Context) -> None: 
+    global MAX_RESPONSES
+    MAX_RESPONSES = ctx.options.max
+    await ctx.respond(f"The new conversions limit per message is now {MAX_RESPONSES}!")
+
 # Same as the auto parser. Will attempt to convert measurements imperial->metric or vice versa.
 @bot.command()
-@lightbulb.option("value", "Value, use . for decimal notation", float)
+@lightbulb.option("value", "Value to convert, use . for decimal notation", float)
 @lightbulb.option("unit", "Unit to convert from", str)
-@lightbulb.command("autoconvert", "Convert a measurement to whatever Convertabot thinks is best", aliases=["autocon"])
+@lightbulb.command("convert", "Convert a measurement to whatever Convertabot thinks is best", aliases=["autocon","autoconvert"])
 @lightbulb.implements(lightbulb.SlashCommand)
-async def autoconvert(ctx: lightbulb.Context) -> None:
+async def convert(ctx: lightbulb.Context) -> None:
     number = ctx.options.value
     unit = ctx.options.unit
     comb = str(number) + unit
@@ -67,12 +77,12 @@ async def autoconvert(ctx: lightbulb.Context) -> None:
 
 # Convert from one unit to another one, of the user's choosing.
 @bot.command()
-@lightbulb.option("value", "Value to convert from, use . for decimal notation", float)
-@lightbulb.option("unit_1", "Unit to convert from", str)
+@lightbulb.option("value", "Value to convert, use . for decimal notation", float)
+@lightbulb.option("unit_1", "Unit to convert FROM", str)
 @lightbulb.option("unit_2", "Final unit after conversion", str)
-@lightbulb.command("convert", "Convert from one unit to another. WIP", aliases=["manualconvert"])
+@lightbulb.command("manualconvert", "Convert from one unit to another.", aliases=["mancon","manualcon"])
 @lightbulb.implements(lightbulb.SlashCommand)
-async def convert(ctx: lightbulb.Context) -> None:
+async def manualconvert(ctx: lightbulb.Context) -> None:
     number = ctx.options.value
     unit = ctx.options.unit_1
     target_unit = ctx.options.unit_2

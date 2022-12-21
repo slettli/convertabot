@@ -59,6 +59,7 @@ def strip_msg(input, maxResponses):
     converted = []
     for i in range(maxResponses): # Limit number of parsed messages to a custom/sensible number
         number,wordIndex = get_num_strip(input)
+
         if isinstance(number, int) or isinstance(number, float):
             unit,toRemove = get_unit_strip(input,wordIndex)
             print(unit)
@@ -76,10 +77,21 @@ def strip_msg(input, maxResponses):
             else:
                 if "-" in str(number) and unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
                     number = num(str(number).strip("-"))
-                converted.append([number,unit])
+                elif unit.lower() in ["fahrenheit", "f", "celsius", "c"]:
+                    if "-" in str(number):
+                        totalNum = str(number) + toRemove
+                        dashSpaceNum = totalNum[:1] + " " + totalNum[1:]
+                        dashSpaceNumSpaceUnit = str(number)[:1] + " " + str(number)[1:] + " " + toRemove
+                        if dashSpaceNum in input:
+                            input = input.replace(dashSpaceNum, "", 1) # Remove already converted/extracted
+                        elif dashSpaceNumSpaceUnit in input:
+                            input = input.replace(dashSpaceNumSpaceUnit, "", 1) # Remove already converted/extracted
+                        else:
+                            input = input.replace(str(number), "", 1) # Remove already converted/extracted
+                            input = input.replace(toRemove, "", 1) # Remove already converted/extracted
+                if [number,unit] not in converted:
+                    converted.append([number,unit])
             
-                input = input.replace(str(number), "", 1) # Remove already converted/extracted
-                input = input.replace(toRemove, "", 1) # Remove already converted/extracted
         else:
             break
 
@@ -105,8 +117,9 @@ def get_num_strip(input):
     oneDash = False # See above
     extractNum = [] # Extract number from string
     for c in stripInput[::-1]:
-        if c == " " and oneSpace == False and c != "- ":
-            oneSpace = True
+        if c == " " and oneSpace == False:
+            if extractNum: # Allow whitespace at first index if bad slice
+                oneSpace = True
         elif c.isdigit():
             extractNum.append(c)
         elif c == ".":
@@ -256,3 +269,7 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
+
+print(convertHandler("I like - 15 c and",2))
+print(convertHandler("I like -15 c and",2))
+print(convertHandler("I like - 15c and",2)) 

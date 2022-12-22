@@ -160,7 +160,7 @@ def get_unit_strip(preCutInput, startIndex):
     # Search for spelled out form
     elif re.search(r"^(kilometers? per hour|miles? per hour|gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot|fahrenheit|celsius|millimeters?)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
-            return shorten_unit(unit_string).upper()
+            unit_string = spell_out_unit(unit_string).upper()
         else:
             unit_string = unit_string.lower()
             # A bunch of special clauses
@@ -176,7 +176,7 @@ def get_unit_strip(preCutInput, startIndex):
                 unit_string = "inches"
             elif unit_string == "foot":
                 unit_string = "feet"
-            unit_string = shorten_unit(unit_string).lower()
+            unit_string = spell_out_unit(unit_string).lower()
     else:
         return None
 
@@ -187,9 +187,6 @@ def get_return_unit(init_unit):
     return return_units.get(init_unit)
 
 def spell_out_unit(unit):
-    return spelled_out_units.get(unit)
-
-def shorten_unit(unit):
     return spelled_out_units.get(unit)
 
 # Converts values from one unit to another

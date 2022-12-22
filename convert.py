@@ -53,35 +53,40 @@ def num(n):
         except:
             return None
 
-# Attempts to strip message to only number and unit. Big and messy
-# First find index where unit starts
+# Strip message to only number and unit
 def strip_msg(input, maxResponses):
     converted = []
-    for i in range(maxResponses): # Limit number of parsed messages to a custom/sensible number
+    looped = False 
+
+    # Find a max number of units to convert, not including duplicates
+    while maxResponses != 0: 
         number,wordIndex = get_num_strip(input)
-        if isinstance(number, int) or isinstance(number, float):
-            unit,toRemove = get_unit_strip(input,wordIndex)
-            print(unit)
-            unit = re.sub("[^a-zA-Z]+", "", unit)
-            print(unit)
-            if unit == None:
-                break
-            elif unit == "l":
-                if "-" in str(number) and unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
-                    number = num(str(number).strip("-"))
-                converted.append([number,unit.upper()])
-            
-                input = input.replace(str(number), "", 1) # Remove already converted/extracted
-                input = input.replace(toRemove, "", 1) # Remove already converted/extracted
-            else:
-                if "-" in str(number) and unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
-                    number = num(str(number).strip("-"))
-                converted.append([number,unit])
-            
-                input = input.replace(str(number), "", 1) # Remove already converted/extracted
-                input = input.replace(toRemove, "", 1) # Remove already converted/extracted
-        else:
+
+        if not isinstance(number, int) and not isinstance(number, float):
             break
+
+        unit,removeIndex = get_unit_strip(input,wordIndex)
+        unit = re.sub("[^a-zA-Z]+", "", unit)
+
+        if not unit:
+            break
+        
+        if "-" in str(number) :
+            if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
+                number = num(str(number).strip("-"))
+
+        if [number,unit] not in converted:
+            if unit == "l": # Special clause for liters
+                unit = unit.upper()
+            converted.append([number,unit])
+            maxResponses -= 1
+        elif looped:
+            maxResponses -= 1
+        else: # Prevent infinite loop if processing same or identical data/measurements twice
+            looped = True 
+
+        # Remove processed input from input string
+        input = input[wordIndex+removeIndex:]
 
     return converted
 
@@ -89,7 +94,7 @@ def strip_msg(input, maxResponses):
 def get_num_strip(input):
     # Split at first number followed by a letter
     try: 
-        indexFirstLetter = re.search(r"\d\s[A-Za-z]|\d[A-Z[a-z]", input).start()
+        indexFirstLetter = re.search(r"\d\s[A-Za-z]|\d[A-Za-z]", input).start()
     except:
         return None,None
 
@@ -104,9 +109,12 @@ def get_num_strip(input):
     oneSpace = False # Dumbest possible fix for allowing one space only
     oneDash = False # See above
     extractNum = [] # Extract number from string
-    for c in stripInput[::-1]:
-        if c == " " and oneSpace == False and c != "- ":
-            oneSpace = True
+
+    # Iterate over string and save numbers, allowing for one dash and whitespace
+    for c in stripInput[::-1]: 
+        if c == " " and oneSpace == False:
+            if extractNum: # Allow whitespace at first index if bad slice
+                oneSpace = True
         elif c.isdigit():
             extractNum.append(c)
         elif c == ".":
@@ -118,38 +126,40 @@ def get_num_strip(input):
             oneDash = True
         elif re.search(r"[^\d]|[^.]",c):
             break
+
     extractNum.reverse()
 
     foundNum = (''.join(extractNum))
     if("," in foundNum):
         foundNum = foundNum.replace(",",".")
     foundNum = num(foundNum)
-    return foundNum,indexFirstLetter
+    
+    return foundNum, indexFirstLetter
         
-# Find matching unit if any, then return index of last letter 
+# Find matching unit if any, then return index of that 
 def get_unit_strip(preCutInput, startIndex):
     input = preCutInput[startIndex:startIndex+12] # Use part after number we just split
 
     # Split at first letter
     index_to_split = re.search(r"\s|[^\w]|$", input).start()
-    if index_to_split is not None:
+
+    if index_to_split:
         unit_string = input[0:index_to_split]
-        toRemove = unit_string
     else:
         return None
+
     # Search for shorthand form
     if re.search(r"^(k(m|p)\/?h|mp\/?h|gal|L|lbs|lb|kg|mi|km|cm|in|m|ft|c|f|mm)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
-            return unit_string.upper(),toRemove
+            unit_string = unit_string.upper()
         elif unit_string == "kp/h" or unit_string == "km/h" or unit_string == "mp/h":
-            unit_string = unit_string.replace('/','')
-            return unit_string.lower(),toRemove
+            unit_string = unit_string.replace('/','').lower()
         else:
-            return unit_string.lower(),toRemove
+            unit_string = unit_string.lower()
     # Search for spelled out form
     elif re.search(r"^(kilometers? per hour|miles? per hour|gallons?|liters?|pounds|kilograms?|miles?|kilometers?|centimeters?|inches|inch|meters?|feet|foot|fahrenheit|celsius|millimeters?)$", unit_string, re.I):
         if re.search(r"^L$", unit_string, re.I):
-            return shorten_unit(unit_string).upper(),toRemove
+            return shorten_unit(unit_string).upper()
         else:
             unit_string = unit_string.lower()
             # A bunch of special clauses
@@ -165,10 +175,13 @@ def get_unit_strip(preCutInput, startIndex):
                 unit_string = "inches"
             elif unit_string == "foot":
                 unit_string = "feet"
-            return shorten_unit(unit_string).lower(),toRemove
+            unit_string = shorten_unit(unit_string).lower()
     else:
         return None
 
+    return unit_string, index_to_split
+
+# Methods for extracting target unit from dict
 def get_return_unit(init_unit):
     return return_units.get(init_unit)
 
@@ -180,8 +193,9 @@ def shorten_unit(unit):
          if unit == value:
              return key
 
+# Converts values from one unit to another
 def convert(init_num, init_unit):
-    if init_num is None:
+    if not init_num:
         return None
 
     GAL_TO_L = 3.78541
@@ -220,39 +234,37 @@ def convert(init_num, init_unit):
         case _:
             return None
 
+# Formats return strings
 def get_string(init_num, init_unit, return_num, return_unit):
-    if init_num is None:
-        if init_unit is None:
-            return "Invalid number and unit"
-        else:
-            return "Invalid number"
-    elif init_unit is None:
-        return "Invalid unit"
-    else:
-        return (
-            str(init_num)
-            + " "
-            + spell_out_unit(init_unit)
-            + " is "
-            + str(return_num)
-            + " "
-            + spell_out_unit(return_unit)
-        )
+    if not init_num or not init_unit:
+            return None
+            
+    return (
+        str(init_num)
+        + " "
+        + spell_out_unit(init_unit)
+        + " is "
+        + str(return_num)
+        + " "
+        + spell_out_unit(return_unit)
+    )
 
 # Handles conversion when provided string
 def convertHandler(message, maxResponses):
     results = []
     toConvert = strip_msg(message,maxResponses) # Array of found numbers and units
     for c in toConvert:
-        if ("," in c and "." in c):
-            result = get_string(None,None,None,None)
-            results.append(result)
-        else:
-            num = c[0]
-            unit = c[1]
-            returnUnit = get_return_unit(unit)
-            convertedNum = convert(num,unit)
-            result = get_string(num,unit,convertedNum,returnUnit)
+        if ("," in c and "." in c): # Skip if funky number 
+            continue
+
+        num = c[0]
+        unit = c[1]
+        returnUnit = get_return_unit(unit)
+        convertedNum = convert(num,unit)
+
+        result = get_string(num,unit,convertedNum,returnUnit)
+
+        if result:
             results.append(result)
 
     return results

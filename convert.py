@@ -190,9 +190,7 @@ def spell_out_unit(unit):
     return spelled_out_units.get(unit)
 
 def shorten_unit(unit):
-    for key, value in spelled_out_units.items():
-         if unit == value:
-             return key
+    return spelled_out_units.get(unit)
 
 # Converts values from one unit to another
 def convert(init_num, init_unit):

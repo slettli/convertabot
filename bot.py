@@ -11,7 +11,7 @@ MAX_RESPONSES = 3 # Default max num of conversions the bot will do from a single
 
 # Initial setup
 load_dotenv()
-token = os.getenv('TOKEN') # Converta testbot
+token = os.getenv('TOKEN')
 bot = lightbulb.BotApp(token, intents = hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
 start_time: datetime.datetime = datetime.datetime.now()
 
@@ -37,7 +37,7 @@ async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse mes
 
 # Check if the bot is online, or just waste computing resources.
 @bot.command()
-@lightbulb.command("poke", "Poke Convertabot.")
+@lightbulb.command("poke", "Poke June.")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def poke(ctx: lightbulb.Context) -> None: 
     await ctx.respond("Stop that!")
@@ -60,7 +60,7 @@ async def uptime(ctx: lightbulb.Context) -> None:
 @lightbulb.command("set_max", "Set max number of conversions from one message, to avoid filling chat.")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def set_max(ctx: lightbulb.Context) -> None: 
-    if ctx.options.max > 20 or ctx.options.max < 1:
+    if ctx.options.max > 10 or ctx.options.max < 1:
         await ctx.respond("Please set a value between 1 and 20.")
     else:
         global MAX_RESPONSES
@@ -71,7 +71,7 @@ async def set_max(ctx: lightbulb.Context) -> None:
 @bot.command()
 @lightbulb.option("value", "Value to convert, use . for decimal notation", float)
 @lightbulb.option("unit", "Unit to convert from", str)
-@lightbulb.command("convert", "Convert a measurement to whatever Convertabot thinks is best", aliases=["autocon","autoconvert"])
+@lightbulb.command("convert", "Convert a measurement to whatever June thinks is best", aliases=["autocon","autoconvert"])
 @lightbulb.implements(lightbulb.SlashCommand)
 async def convert(ctx: lightbulb.Context) -> None:
     number = ctx.options.value

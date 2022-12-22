@@ -53,8 +53,7 @@ def num(n):
         except:
             return None
 
-# Attempts to strip message to only number and unit. Big and messy
-# First find index where unit starts
+# Strip message to only number and unit
 def strip_msg(input, maxResponses):
     converted = []
     looped = False 

@@ -28,7 +28,7 @@ async def auto_convert(ctx: hikari.MessageCreateEvent) -> None: # Auto parse mes
             if not response:
                 return
 
-            await bot.rest.create_message(ctx.channel_id, response)
+            await bot.rest.create_message(ctx.channel_id, response, reply = ctx.message)
         except Exception as e:
             print(f"Exception: '{e}'\nWhile parsing: '{ctx.message.content}'\n")
             return

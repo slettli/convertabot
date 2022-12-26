@@ -65,7 +65,7 @@ def strip_msg(input, maxResponses):
         if not isinstance(number, int) and not isinstance(number, float):
             break # break if no number at all
         
-        try:
+        try: # Ignore/remove numbers without a corresponding unit
             unit,removeIndex = get_unit_strip(input,wordIndex)
             unit = re.sub("[^a-zA-Z]+", "", unit)
         except:

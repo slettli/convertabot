@@ -56,12 +56,12 @@ async def uptime(ctx: lightbulb.Context) -> None:
 
 # Set a max number of conversions from a single message
 @bot.command()
-@lightbulb.option("max", "Max number of conversions from one message, 1-20", int)
+@lightbulb.option("max", "Max number of conversions from one message, 1-10", int)
 @lightbulb.command("set_max", "Set max number of conversions from one message, to avoid filling chat.")
 @lightbulb.implements(lightbulb.SlashCommand)
 async def set_max(ctx: lightbulb.Context) -> None: 
     if ctx.options.max > 10 or ctx.options.max < 1:
-        await ctx.respond("Please set a value between 1 and 20.")
+        await ctx.respond("Please set a value between 1 and 10.")
     else:
         global MAX_RESPONSES
         MAX_RESPONSES = ctx.options.max

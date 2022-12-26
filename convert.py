@@ -114,10 +114,9 @@ def get_num_strip(input):
                 oneSpace = True
         elif c.isdigit():
             extractNum.append(c)
-        elif c == ".":
-            extractNum.append(c)
-        elif c == ",":
-            extractNum.append(c)
+        elif "," not in extractNum and "." not in extractNum:
+            if c == "." or c == ",":
+                extractNum.append(c)
         elif c == "-" and oneDash == False:
             extractNum.append(c)
             oneDash = True
@@ -265,3 +264,5 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
+
+print(convertHandler("1.5.inches,12.2inches. 8.3inches", 10))

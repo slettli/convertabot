@@ -59,7 +59,7 @@ def strip_msg(input, maxResponses):
     looped = False 
 
     # Find a max number of units to convert, not including duplicates
-    while maxResponses != 0: 
+    while maxResponses > 0 and input: 
         number,wordIndex = get_num_strip(input)
 
         if not isinstance(number, int) and not isinstance(number, float):
@@ -81,11 +81,7 @@ def strip_msg(input, maxResponses):
                 unit = unit.upper()
             converted.append([number,unit])
             maxResponses -= 1
-        elif looped:
-            maxResponses -= 1
-        else: # Prevent infinite loop if processing same or identical data/measurements twice
-            looped = True 
-
+        
         # Remove processed input from input string
         input = input[wordIndex+removeIndex:]
 
@@ -269,5 +265,3 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
-
-print(convertHandler("It’s 15 and 40 c and 20 f and 30 and 40.5 and 75 meters and 33",5))

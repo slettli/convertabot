@@ -11,10 +11,14 @@ from convertabot.plugins import convert as c
 MAX_RESPONSES = 3 # Default max num of conversions the bot will do from a single message, to avoid filling up chat
 
 # Initial setup
-load_dotenv()
-token = os.getenv('TOKEN')
-bot = lightbulb.BotApp(token, intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
-start_time: datetime.datetime = datetime.datetime.now()
+
+class Bot(lightbulb.BotApp):
+
+    def __init__(self) -> None:
+        load_dotenv()
+        lightbulb.BotApp(token=os.getenv('TOKEN'),
+                         intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
+        start_time: datetime.datetime = datetime.datetime.now()
 
 # Parse incoming messages if auto-conversion is enabled
 @bot.listen()

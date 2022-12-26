@@ -1,18 +1,19 @@
-import os
 import datetime
+import os
+import re
+
 import hikari
 import lightbulb
-import re
 from dotenv import load_dotenv
 
-import convert as c
+from convertabot.plugins import convert as c
 
 MAX_RESPONSES = 3 # Default max num of conversions the bot will do from a single message, to avoid filling up chat
 
 # Initial setup
 load_dotenv()
 token = os.getenv('TOKEN')
-bot = lightbulb.BotApp(token, intents = hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
+bot = lightbulb.BotApp(token, intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
 start_time: datetime.datetime = datetime.datetime.now()
 
 # Parse incoming messages if auto-conversion is enabled

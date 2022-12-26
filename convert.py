@@ -62,7 +62,7 @@ def strip_msg(input, maxResponses):
     while maxResponses > 0 and input: 
         number,wordIndex = get_num_strip(input)
 
-        if not isinstance(number, int) and not isinstance(number, float):
+        if not number:
             break # break if no number at all
         
         try: # Ignore/remove numbers without a corresponding unit
@@ -72,9 +72,20 @@ def strip_msg(input, maxResponses):
             input = input[wordIndex:]
             continue
         
-        if "-" in str(number) :
-            if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
-                number = num(str(number).strip("-"))
+        # Deal with dashes in number
+        if "-" in number : # Skip measurements with negative numbers, unless temperature
+            if "- " in number: # If unit is not temp but has uninentional dash, remove dash and space
+                if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
+                    number = number[2:]
+                else: # Else keep dash and assume negative temperature measurement
+                    number = number.replace(" ","")
+
+        # Sanity check on number, skip this measurement if not valid number
+        try:
+            number = num(number)
+        except:
+            input = input[wordIndex:]
+            continue
 
         if [number,unit] not in converted:
             if unit == "l": # Special clause for liters
@@ -103,23 +114,23 @@ def get_num_strip(input):
         indexFirstLetter += 1
         stripInput = input[0:indexFirstLetter]
 
-    oneSpace = False # Dumbest possible fix for allowing one space only
-    oneDash = False # See above
+    addedNum = False
     extractNum = [] # Extract number from string
+    stripInput = stripInput.strip() # Remove trailing whitespaces
 
     # Iterate over string and save numbers, allowing for one dash and whitespace
     for c in stripInput[::-1]: 
-        if c == " " and oneSpace == False:
-            if extractNum: # Allow whitespace at first index if bad slice
-                oneSpace = True
-        elif c.isdigit():
+        if c.isdigit() and "-" not in extractNum:
             extractNum.append(c)
-        elif "," not in extractNum and "." not in extractNum:
-            if c == "." or c == ",":
-                extractNum.append(c)
-        elif c == "-" and oneDash == False:
+            addedNum = True
+        elif c == " " and addedNum == True and " " not in extractNum: # Allow one space, in case - 5 celsius and such
             extractNum.append(c)
-            oneDash = True
+        elif c == "." or c == ",": # Only allow one of either , .
+            if "," in extractNum or "." in extractNum:
+                break
+            extractNum.append(c)
+        elif c == "-" and addedNum == True and  "-" not in extractNum: # Only allow dash if preceeding number
+            extractNum.append(c)
         elif re.search(r"[^\d]|[^.]",c):
             break
 
@@ -128,7 +139,6 @@ def get_num_strip(input):
     foundNum = (''.join(extractNum))
     if("," in foundNum):
         foundNum = foundNum.replace(",",".")
-    foundNum = num(foundNum)
     
     return foundNum, indexFirstLetter
         
@@ -264,5 +274,3 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
-
-print(convertHandler("1.5.inches,12.2inches. 8.3inches", 10))

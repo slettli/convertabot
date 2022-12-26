@@ -63,13 +63,14 @@ def strip_msg(input, maxResponses):
         number,wordIndex = get_num_strip(input)
 
         if not isinstance(number, int) and not isinstance(number, float):
-            break
-
-        unit,removeIndex = get_unit_strip(input,wordIndex)
-        unit = re.sub("[^a-zA-Z]+", "", unit)
-
-        if not unit:
-            break
+            break # break if no number at all
+        
+        try:
+            unit,removeIndex = get_unit_strip(input,wordIndex)
+            unit = re.sub("[^a-zA-Z]+", "", unit)
+        except:
+            input = input[wordIndex:]
+            continue
         
         if "-" in str(number) :
             if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
@@ -268,3 +269,5 @@ def convertHandler(message, maxResponses):
             results.append(result)
 
     return results
+
+print(convertHandler("It’s 15 and 40 c and 20 f and 30 and 40.5 and 75 meters and 33",5))

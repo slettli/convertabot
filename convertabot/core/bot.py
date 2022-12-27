@@ -17,7 +17,7 @@ class Bot(lightbulb.BotApp):
                          intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
         self.start_time: datetime.datetime = datetime.datetime.now()
         self.max_responses = 3
-        self.load_extensions_from("plugins")  # Load commands
+        self.load_extensions_from("convertabot/plugins/")  # Load commands
 
 
 # Handles message parsing, calls relevant functions/modules. Returns formatted response

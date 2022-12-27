@@ -1,6 +1,6 @@
 import os
 
-from core.bot import Bot
+from convertabot.core.bot import Bot
 
 if __name__ == "__main__":
     bot = Bot()

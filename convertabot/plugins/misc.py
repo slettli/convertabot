@@ -27,10 +27,7 @@ async def poke(ctx: lightbulb.Context) -> None:
 async def uptime(ctx: lightbulb.Context) -> None:
     dt = datetime.datetime.now() - plugin.bot.start_time
     dt -= datetime.timedelta(microseconds=dt.microseconds)
-    if (dt.days > 0):
-        await ctx.respond(f"`{str(dt)}` (days, hours, minutes, seconds)")
-    else:
-        await ctx.respond(f"`{str(dt)}` (hours, minutes, seconds)")
+    await ctx.respond(f"`{str(dt)}` (hours, minutes, seconds)")
 
 
 def load(bot):

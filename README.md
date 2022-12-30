@@ -2,24 +2,13 @@
 
 A Discord bot for converting imperial units to metric, and vice versa. Its main strength lies in being able to do this automatically, without being prompted by a command. Built with Python 3.11 and Hikari as a way to help ease chats between people across the pond. Not currently stable or feature-complete.
 
-## Usage
+## Features
 
 ### Auto-conversions
-By default the bot will attempt to automatically detect and convert supported units. Options to configure this behavior will come sometime. 
 
-Example:
+If granted the necessary permissions, the bot will attempt to automatically detect and convert supported units. Options to configure this behavior will be implemented at a later time. 
 
-```
-American chatter: 
-I just love myself some 35 pounds in this 94f weather!
-
-European chatter: 
-What? Are you boiling 35 quid, mate?
-
-Convertabot:
-35 pounds is 15.88 kilograms
-94 fahrenheit is 34.45 celsius
-```
+<img width="514" alt="Auto-conversion example" src="https://user-images.githubusercontent.com/52682352/210027568-ede570b8-a9e9-4de9-89b2-cfb616bbd1b3.png">
 
 ### Slash Commands
 
@@ -34,7 +23,7 @@ Same as the auto-conversion. Does not currently support choosing what you want s
 
 ## Supported units
 
-The list is fairly limited, since all the units have to work with the auto-conversion feature.
+More will be added later.
 
 ##### Volume and weight:
 
@@ -48,7 +37,7 @@ The list is fairly limited, since all the units have to work with the auto-conve
 - centimeters <-> inches
 - millimeters <-> inches
 
-##### Misc:
+##### Temperature:
 
 - celsius <-> fahrenheit
 

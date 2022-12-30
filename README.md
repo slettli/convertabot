@@ -47,18 +47,25 @@ Convertabot currently runs on Python 3.11, although 3.10 might work as well. I d
 
 But if you want to give it a go:
 
-1. Create an application and a bot using Discord's developer console.
+
+### 1. Clone this repo
+
+### 2. Log in to Discord's developer console
+  - Create an application, and then a bot for that application
   - If you want the auto-conversion feature, make sure you enable 'MESSAGE CONTENT INTENT'. This intent is required to receive messages without being prompted by a command.
+  - This is also where you can generate an invite and add the bot to your server.
 
-2. Clone this repo and create a `.env` file in the root directory with:
-  - `TOKEN="YOUR TOKEN HERE"`
-  - Don't remove the double quotation marks, but replace YOUR TOKEN HERE with the one generated in the developer console, under bot.
+### 3. Set up the bot's token 
+- Create a `.env` file in the root directory with the bot's token from the Discord developer console.
+- See `example.env` for what the contents should look like. The file should just be called `.env`, with no filename.
 
-3. From the root folder, install the required following modules using pip:
+### 4. Install the required modules
+- Open a terminal in the bot's folder and enter:
   - `pip3 install -r requirements.txt`
 
-4. Start the bot:
-  - `python3 -m convertabot.main`
+### 5. Start the bot
+- The bot should now be ready to go. In a terminal:
+  - `python3 -OO -m convertabot.main`
 
 Note that the bot currently doesn't store settings on a server-by-server basis, nor does it care *who* asks it to change these.
 If you run into issues, check that the bot has the correct permissions (Read Messages), and that the required intents are enabled in the developer console.

@@ -13,7 +13,7 @@ class Bot(lightbulb.BotApp):
 
     def __init__(self) -> None:
         load_dotenv()
-        super().__init__(token=os.getenv('TOKEN'),
+        super().__init__(token=os.getenv('DISCORD_TOKEN'),
                          intents=hikari.Intents(hikari.Intents.ALL_UNPRIVILEGED | hikari.Intents.MESSAGE_CONTENT))
         self.start_time: datetime.datetime = datetime.datetime.now()
         self.max_responses = 3

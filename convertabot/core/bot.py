@@ -24,7 +24,7 @@ class Bot(lightbulb.BotApp):
 def parse_message(msg, maxResponses):
     response = c.convertHandler(msg, maxResponses)
 
-    if not response:  # If no response found
+    if not response or maxResponses < len(response):  # If no response found
         return
 
     fullResponse = ""  # Filter out and format successful conversions

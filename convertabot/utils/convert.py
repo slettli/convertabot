@@ -56,47 +56,47 @@ def num(n):
 
 
 # Strip message to only number and unit
-def strip_msg(input, maxResponses):
+def strip_msg(textInput, maxResponses):
     converted = []
     looped = False
 
     # Find a max number of units to convert, not including duplicates
-    while maxResponses > 0 and input:
-        number, wordIndex = get_num_strip(input)
+    while maxResponses > 0 and textInput:
+        numberInput, wordIndex = get_num_strip(textInput)
 
-        if not number:
+        if not numberInput:
             break  # break if no number at all
 
         try:  # Ignore/remove numbers without a corresponding unit
-            unit, removeIndex = get_unit_strip(input, wordIndex)
+            unit, removeIndex = get_unit_strip(textInput, wordIndex)
             unit = re.sub("[^a-zA-Z]+", "", unit)
         except:
-            input = input[wordIndex:]
+            textInput = textInput[wordIndex:]
             continue
 
         # Deal with dashes in number
-        if "-" in number:  # Skip measurements with negative numbers, unless temperature
-            if "- " in number:  # If unit is not temp but has uninentional dash, remove dash and space
+        if "-" in numberInput:  # Skip measurements with negative numbers, unless temperature
+            if "- " in numberInput:  # If unit is not temp but has uninentional dash, remove dash and space
                 if unit.lower() not in ["fahrenheit", "f", "celsius", "c"]:
-                    number = number[2:]
+                    numberInput = numberInput[2:]
                 else:  # Else keep dash and assume negative temperature measurement
-                    number = number.replace(" ", "")
+                    numberInput = numberInput.replace(" ", "")
 
         # Sanity check on number, skip this measurement if not valid number
         try:
-            number = num(number)
+            numberInput = num(numberInput)
         except:
-            input = input[wordIndex:]
+            textInput = textInput[wordIndex:]
             continue
 
-        if [number, unit] not in converted:
+        if [numberInput, unit] not in converted:
             if unit == "l":  # Special clause for liters
                 unit = unit.upper()
-            converted.append([number, unit])
+            converted.append([numberInput, unit])
             maxResponses -= 1
 
         # Remove processed input from input string
-        input = input[wordIndex + removeIndex:]
+        textInput = textInput[wordIndex + removeIndex:]
 
     return converted
 
@@ -276,12 +276,12 @@ def convertHandler(message, maxResponses):
         if ("," in c and "." in c):  # Skip if funky number
             continue
 
-        num = c[0]
+        number = c[0]
         unit = c[1]
         returnUnit = get_return_unit(unit)
-        convertedNum = convert(num, unit)
+        convertedNum = convert(number, unit)
 
-        result = get_string(num, unit, convertedNum, returnUnit)
+        result = get_string(number, unit, convertedNum, returnUnit)
 
         if result:
             results.append(result)
